@@ -485,6 +485,7 @@ target_sources(dolphinstatic PRIVATE
 
 target_link_libraries(dolphinstatic
     dolphinprivate
+    zenpanel_panel
     KF6::CoreAddons
     KF6::GuiAddons
     KF6::KCMUtils
@@ -492,6 +493,8 @@ target_link_libraries(dolphinstatic
     KF6::Notifications
     KF6::BookmarksWidgets
 )
+
+add_subdirectory(panels/zenpanel)
 
 if(HAVE_PACKAGEKIT)
     target_link_libraries(

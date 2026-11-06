@@ -25,6 +25,7 @@
 #include "middleclickactioneventfilter.h"
 #include "panels/folders/folderspanel.h"
 #include "panels/places/placespanel.h"
+#include "panels/zenpanel/zendockpanel.h"
 #include "panels/terminal/terminalpanel.h"
 #include "search/dolphinquery.h"
 #include "selectionmode/actiontexthelper.h"
@@ -280,6 +281,10 @@ DolphinMainWindow::~DolphinMainWindow()
                &DolphinDockWidget::visibilityChanged,
                this,
                &DolphinMainWindow::slotPlacesPanelVisibilityChanged);
+
+    if (m_zenDock) {
+        disconnect(m_zenDock, &DolphinDockWidget::visibilityChanged, this, &DolphinMainWindow::slotZenPanelVisibilityChanged);
+    }
 }
 
 QVector<DolphinViewContainer *> DolphinMainWindow::viewContainers() const
@@ -1244,6 +1249,17 @@ void DolphinMainWindow::slotPlacesPanelVisibilityChanged(bool visible)
         return;
     }
     m_placesPanel->setFocus();
+}
+
+void DolphinMainWindow::slotZenPanelVisibilityChanged(bool visible)
+{
+    if (!visible && m_activeViewContainer) {
+        m_activeViewContainer->view()->setFocus();
+        return;
+    }
+    if (m_zenPanel) {
+        m_zenPanel->setFocus();
+    }
 }
 
 void DolphinMainWindow::goBack()
@@ -2567,6 +2583,39 @@ void DolphinMainWindow::setupDockWidgets()
     actionCollection()->setDefaultShortcut(focusPlacesPanel, Qt::CTRL | Qt::Key_P);
     connect(focusPlacesPanel, &QAction::triggered, this, &DolphinMainWindow::togglePlacesPanelFocus);
 
+    // Setup "Zen Panel"
+    m_zenDock = new DolphinDockWidget(i18nc("@title:window", "Zen Panel"));
+    m_zenDock->setLocked(lock);
+    m_zenDock->setObjectName(QStringLiteral("zenDock"));
+    m_zenDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    m_zenPanel = new ZenDockPanel(m_zenDock, this);
+    m_zenPanel->setCustomContextMenuActions({lockLayoutAction});
+    m_zenPanel->setTabWidget(m_tabWidget);
+    m_zenDock->setWidget(m_zenPanel);
+
+    createPanelAction(QIcon::fromTheme(QStringLiteral("sidebar-places")), Qt::Key_F8, m_zenDock, QStringLiteral("show_zen_panel"));
+
+    addDockWidget(Qt::LeftDockWidgetArea, m_zenDock);
+    connect(m_zenPanel, &ZenDockPanel::placeActivated, this, &DolphinMainWindow::slotPlaceActivated);
+    connect(m_zenPanel, &ZenDockPanel::tabRequested, this, &DolphinMainWindow::openNewTab);
+    connect(m_zenPanel, &ZenDockPanel::activeTabRequested, this, &DolphinMainWindow::openNewTabAndActivate);
+    connect(m_zenPanel, &ZenDockPanel::newWindowRequested, this, [this](const QUrl &url) {
+        Dolphin::openNewWindow({url}, this);
+    });
+    connect(m_zenPanel, &ZenDockPanel::openInSplitViewRequested, this, &DolphinMainWindow::openInSplitView);
+    connect(m_zenPanel, &ZenDockPanel::errorMessage, this, &DolphinMainWindow::showErrorMessage);
+    connect(this, &DolphinMainWindow::urlChanged, m_zenPanel, &ZenDockPanel::setUrl);
+    connect(m_zenDock, &DolphinDockWidget::visibilityChanged, this, &DolphinMainWindow::slotZenPanelVisibilityChanged);
+    connect(this, &DolphinMainWindow::settingsChanged, m_zenPanel, &ZenDockPanel::readSettings);
+
+    QAction *focusZenPanel = actionCollection()->addAction(QStringLiteral("focus_zen_panel"));
+    focusZenPanel->setText(i18nc("@action:inmenu View", "Focus Zen Panel"));
+    focusZenPanel->setToolTip(i18nc("@info:tooltip", "Move keyboard focus to and from the Zen panel."));
+    focusZenPanel->setIcon(QIcon::fromTheme(QStringLiteral("swap-panels")));
+    actionCollection()->setDefaultShortcut(focusZenPanel, Qt::CTRL | Qt::SHIFT | Qt::Key_Z);
+    connect(focusZenPanel, &QAction::triggered, this, &DolphinMainWindow::toggleZenPanelFocus);
+
     // Add actions into the "Panels" menu
     KActionMenu *panelsMenu = new KActionMenu(i18nc("@action:inmenu View", "Show Panels"), this);
     actionCollection()->addAction(QStringLiteral("panels"), panelsMenu);
@@ -2574,6 +2623,7 @@ void DolphinMainWindow::setupDockWidgets()
     panelsMenu->setPopupMode(QToolButton::InstantPopup);
     const KActionCollection *ac = actionCollection();
     panelsMenu->addAction(ac->action(QStringLiteral("show_places_panel")));
+    panelsMenu->addAction(ac->action(QStringLiteral("show_zen_panel")));
 #if HAVE_BALOO
     panelsMenu->addAction(ac->action(QStringLiteral("show_information_panel")));
 #endif
@@ -2584,6 +2634,7 @@ void DolphinMainWindow::setupDockWidgets()
     panelsMenu->addSeparator();
     panelsMenu->addAction(actionShowAllPlaces);
     panelsMenu->addAction(focusPlacesPanel);
+    panelsMenu->addAction(focusZenPanel);
     panelsMenu->addAction(ac->action(QStringLiteral("focus_terminal_panel")));
 
     connect(panelsMenu->menu(), &QMenu::aboutToShow, this, [actionShowAllPlaces] {
@@ -3162,6 +3213,27 @@ void DolphinMainWindow::togglePlacesPanelFocus()
 
     m_placesPanel->setFocus(Qt::FocusReason::ShortcutFocusReason);
     actionCollection()->action(QStringLiteral("focus_places_panel"))->setText(i18nc("@action:inmenu View", "Defocus Places Panel"));
+}
+
+void DolphinMainWindow::toggleZenPanelFocus()
+{
+    if (!m_zenPanel || !m_zenDock) {
+        return;
+    }
+
+    if (!m_zenDock->isVisible()) {
+        actionCollection()->action(QStringLiteral("show_zen_panel"))->trigger();
+        return;
+    }
+
+    if (m_zenPanel->hasFocus()) {
+        if (m_activeViewContainer) {
+            m_activeViewContainer->view()->setFocus(Qt::FocusReason::ShortcutFocusReason);
+        }
+        return;
+    }
+
+    m_zenPanel->setFocus(Qt::FocusReason::ShortcutFocusReason);
 }
 
 DolphinMainWindow::UndoUiInterface::UndoUiInterface()

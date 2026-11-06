@@ -1,0 +1,6 @@
+File=zenpanelsettings.kcfg
+ClassName=ZenPanelSettings
+Singleton=true
+Mutators=true
+ItemAccessors=true
+GenerateProperties=true

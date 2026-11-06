@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name="zenpanelrc"/>
+
+    <!-- General Panel Behavior & Integration Settings -->
+    <group name="General">
+        <entry name="MaxEssentials" type="Int">
+            <label>Maximum number of visible essentials tiles in the quick-access grid</label>
+            <default>12</default>
+            <min>3</min>
+            <max>30</max>
+        </entry>
+        <entry name="ShowAddEssentialButton" type="Bool">
+            <label>Show the [+] tile at the end of the essentials grid</label>
+            <default>true</default>
+        </entry>
+        <entry name="EssentialsIconStyle" type="Enum">
+            <label>Icon rendering style for the essentials quick-access grid</label>
+            <choices>
+                <choice name="Color">
+                    <label>Full color icons (KDE standard from 32px)</label>
+                </choice>
+                <choice name="Monochrome">
+                    <label>Schematic monochrome outline icons (sidebar menu style)</label>
+                </choice>
+            </choices>
+            <default>Color</default>
+        </entry>
+        <entry name="HighlightOpenTabPlaces" type="Bool">
+            <label>Subtly highlight places currently open in Dolphin tabs or split views</label>
+            <default>true</default>
+        </entry>
+        <entry name="SwitchToExistingTab" type="Bool">
+            <label>Switch to already open tab/split view when clicking a place instead of reopening</label>
+            <default>true</default>
+        </entry>
+        <entry name="DefaultWorkspaceView" type="Enum">
+            <label>Default view mode for the workspace section</label>
+            <choices>
+                <choice name="PlacesAndTabs"/>
+                <choice name="TreeView"/>
+            </choices>
+            <default>PlacesAndTabs</default>
+        </entry>
+        <entry name="DevicesPinned" type="Bool">
+            <label>Keep the devices and hardware section permanently pinned open</label>
+            <default>false</default>
+        </entry>
+        <entry name="ExpandNetworkFolder" type="Bool">
+            <label>List entries of the remote:/ network folder inline as individual device items</label>
+            <default>false</default>
+        </entry>
+        <entry name="ShowHiddenFoldersInTree" type="Bool">
+            <label>Show hidden directories in the embedded folder tree view</label>
+            <default>false</default>
+        </entry>
+        <entry name="LimitTreeToHome" type="Bool">
+            <label>Limit the embedded folder tree view to the user's home directory</label>
+            <default>true</default>
+        </entry>
+        <entry name="ShowTrashSection" type="Bool">
+            <label>Show dedicated trash section in panel</label>
+            <default>true</default>
+        </entry>
+        <entry name="GlobalIconStyle" type="Int">
+            <label>Global icon style (0 = theme default from 32px, 1 = color, 2 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>2</max>
+        </entry>
+        <entry name="PreferOutlineIcons" type="Bool">
+            <label>Prefer schematic outline icons even at larger icon sizes</label>
+            <default>false</default>
+        </entry>
+        <entry name="CustomEssentialsIconSize" type="Int">
+            <label>Custom icon size for Essentials quick-access (0 to follow global setting)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomPlacesIconSize" type="Int">
+            <label>Custom icon size for Places list (0 to follow global setting)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomDevicesIconSize" type="Int">
+            <label>Custom icon size for Devices section (0 to follow global setting)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomTreeIconSize" type="Int">
+            <label>Custom icon size for Folder Tree (0 to follow global setting)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomEssentialsIconStyle" type="Int">
+            <label>Custom icon style for Essentials (0 = follow global, 1 = theme default, 2 = color, 3 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>3</max>
+        </entry>
+        <entry name="CustomPlacesIconStyle" type="Int">
+            <label>Custom icon style for Places (0 = follow global, 1 = theme default, 2 = color, 3 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>3</max>
+        </entry>
+        <entry name="CustomDevicesIconStyle" type="Int">
+            <label>Custom icon style for Devices (0 = follow global, 1 = theme default, 2 = color, 3 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>3</max>
+        </entry>
+        <entry name="CustomTreeIconStyle" type="Int">
+            <label>Custom icon style for Folder Tree (0 = follow global, 1 = theme default, 2 = color, 3 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>3</max>
+        </entry>
+    </group>
+
+    <!--
+        Appearance & Look-and-Feel Styling Metrics:
+        Provides seamless integration with Dolphin's compact QtWidgets Breeze style
+        as well as modern Kirigami/Plasma 6 presentation.
+    -->
+    <group name="Appearance">
+        <!--
+            Look & Feel Mode:
+            - DolphinCompact (0): Replicates the high information density of Dolphin's classical
+              QtWidgets item views (compact row heights, 4px margins, Breeze QStyle metrics).
+            - SystemKirigami (1): Follows modern Kirigami / Plasma 6 guidelines with spacious touch-friendly
+              margins, higher line heights (gridUnit * 1.8), and translucent accent backgrounds.
+        -->
+        <entry name="LookFeelMode" type="Enum">
+            <label>Visual presentation mode (Dolphin compact vs. modern Kirigami)</label>
+            <choices>
+                <choice name="DolphinCompact"/>
+                <choice name="SystemKirigami"/>
+            </choices>
+            <default>DolphinCompact</default>
+        </entry>
+
+        <!--
+            DolphinCompact metrics customization:
+            Set to -1 to automatically derive values from the live QtWidgets Breeze QStyle engine
+            and dolphinrc (PlacesPanel/IconSize). Positive integers override metrics for power-user tuning.
+        -->
+        <entry name="CustomDolphinRowHeight" type="Int">
+            <label>Custom item row height for Dolphin compact mode (-1 for auto-calculation via QStyle)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomDolphinIconSize" type="Int">
+            <label>Custom icon size for Dolphin compact mode (-1 for auto-reading from dolphinrc)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomDolphinLateralMargin" type="Int">
+            <label>Lateral padding in list delegates for Dolphin compact mode in pixels (KFilePlacesView standard: 4px)</label>
+            <default>4</default>
+            <min>0</min>
+            <max>24</max>
+        </entry>
+        <entry name="CustomDolphinCornerRadius" type="Int">
+            <label>Selection and hover corner radius in pixels for Dolphin compact mode (Breeze standard: 3px)</label>
+            <default>3</default>
+            <min>0</min>
+            <max>16</max>
+        </entry>
+
+        <!--
+            SystemKirigami metrics customization:
+            Set to -1 to dynamically scale with Kirigami.Units (gridUnit, smallSpacing, cornerRadius).
+        -->
+        <entry name="CustomKirigamiRowHeight" type="Int">
+            <label>Custom item row height for System/Kirigami mode (-1 for dynamic gridUnit scaling)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>72</max>
+        </entry>
+        <entry name="CustomKirigamiIconSize" type="Int">
+            <label>Custom icon size for System/Kirigami mode (-1 for dynamic iconSizes.smallMedium)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomKirigamiLateralMargin" type="Int">
+            <label>Lateral padding in list delegates for System/Kirigami mode in pixels (-1 for smallSpacing)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>32</max>
+        </entry>
+        <entry name="CustomKirigamiCornerRadius" type="Int">
+            <label>Selection and hover corner radius in pixels for System/Kirigami mode (-1 for Kirigami.Units.cornerRadius)</label>
+            <default>-1</default>
+            <min>-1</min>
+            <max>24</max>
+        </entry>
+    </group>
+</kcfg>

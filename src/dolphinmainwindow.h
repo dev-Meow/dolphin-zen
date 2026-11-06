@@ -40,6 +40,7 @@ class DolphinSettingsDialog;
 class DolphinViewContainer;
 class DolphinRemoteEncoding;
 class DolphinTabWidget;
+class DolphinDockWidget;
 class KFileItem;
 class KFileItemList;
 class KJob;
@@ -48,6 +49,7 @@ class KRecentFilesAction;
 class KToolBarPopupAction;
 class QToolButton;
 class PlacesPanel;
+class ZenDockPanel;
 class TerminalPanel;
 class ServiceMenuShortcutManager;
 
@@ -441,6 +443,7 @@ private Q_SLOTS:
      * @param visible the new visibility state of the Places panel
      */
     void slotPlacesPanelVisibilityChanged(bool visible);
+    void slotZenPanelVisibilityChanged(bool visible);
 
     /** Goes back one step of the URL history. */
     void goBack();
@@ -495,6 +498,9 @@ private Q_SLOTS:
 
     /** Toggles focus to/from the Places Panel. */
     void togglePlacesPanelFocus();
+
+    /** Toggles focus to/from the Zen Panel. */
+    void toggleZenPanelFocus();
 
     /** Opens the settings dialog for Dolphin. */
     void editSettings();
@@ -791,6 +797,8 @@ private:
 
     TerminalPanel *m_terminalPanel;
     PlacesPanel *m_placesPanel;
+    ZenDockPanel *m_zenPanel = nullptr;
+    DolphinDockWidget *m_zenDock = nullptr;
     bool m_tearDownFromPlacesRequested;
 
     KToolBarPopupAction *m_backAction;
