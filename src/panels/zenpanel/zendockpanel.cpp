@@ -26,20 +26,29 @@
 #include <QConcatenateTablesProxyModel>
 #include <KLocalizedQmlContext>
 #include <QLoggingCategory>
-
 Q_LOGGING_CATEGORY(zenLog, "org.kde.dolphin.zenpanel")
+
+void qml_register_types_org_kde_dolphin_zenpanel();
 
 ZenDockPanel::ZenDockPanel(DolphinDockWidget *dock, DolphinMainWindow *mainWindow)
     : Panel(dock)
     , m_dock(dock)
     , m_mainWindow(mainWindow)
 {
+    qml_register_types_org_kde_dolphin_zenpanel();
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     m_quickWidget = new QQuickWidget(this);
     m_quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    connect(m_quickWidget, &QQuickWidget::statusChanged, this, [this](QQuickWidget::Status status) {
+        if (status == QQuickWidget::Error) {
+            for (const auto &err : m_quickWidget->errors()) {
+                qCritical(zenLog) << "[ZenDockPanel QML Error]" << err.toString();
+            }
+        }
+    });
     layout->addWidget(m_quickWidget);
 
     m_masterModel = new ZenPlacesMasterModel(this);

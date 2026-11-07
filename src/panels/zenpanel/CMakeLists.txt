@@ -47,6 +47,7 @@ target_link_libraries(zenpanel_panel PUBLIC
 ecm_add_qml_module(zenpanel_panel
     URI "org.kde.dolphin.zenpanel"
     VERSION 1.0
+    NO_PLUGIN
     SOURCES
         backend/ZenPanelBridge.h
         backend/ZenPanelBridge.cpp
