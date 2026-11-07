@@ -186,22 +186,6 @@ Item {
             }
         }
 
-        Keys.onTabPressed: function(event) {
-            const nextItem = treeView.nextItemInFocusChain(true);
-            if (nextItem) {
-                nextItem.forceActiveFocus(Qt.TabFocusReason);
-                event.accepted = true;
-            }
-        }
-
-        Keys.onBacktabPressed: function(event) {
-            const prevItem = treeView.nextItemInFocusChain(false);
-            if (prevItem) {
-                prevItem.forceActiveFocus(Qt.BacktabFocusReason);
-                event.accepted = true;
-            }
-        }
-
         Keys.onPressed: function (event) {
             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
                 return;

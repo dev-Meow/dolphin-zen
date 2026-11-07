@@ -42,6 +42,9 @@ ZenDockPanel::ZenDockPanel(DolphinDockWidget *dock, DolphinMainWindow *mainWindo
 
     m_quickWidget = new QQuickWidget(this);
     m_quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    m_quickWidget->setFocusPolicy(Qt::StrongFocus);
+    setFocusProxy(m_quickWidget);
+    setFocusPolicy(Qt::StrongFocus);
     connect(m_quickWidget, &QQuickWidget::statusChanged, this, [this](QQuickWidget::Status status) {
         if (status == QQuickWidget::Error) {
             for (const auto &err : m_quickWidget->errors()) {
@@ -103,6 +106,14 @@ ZenDockPanel::ZenDockPanel(DolphinDockWidget *dock, DolphinMainWindow *mainWindo
     // Connect bridge signals to panel signals
     connect(m_bridge, &ZenPanelBridge::urlActivated, this, &ZenDockPanel::placeActivated);
     connect(m_bridge, &ZenPanelBridge::urlInNewTabActivated, this, &ZenDockPanel::tabRequested);
+    connect(m_bridge, &ZenPanelBridge::openInSplitViewRequested, this, &ZenDockPanel::openInSplitViewRequested);
+    connect(m_bridge, &ZenPanelBridge::openInNewWindowRequested, this, &ZenDockPanel::newWindowRequested);
+    connect(m_bridge, &ZenPanelBridge::focusPreviousRequested, this, [this]() {
+        focusPreviousChild();
+    });
+    connect(m_bridge, &ZenPanelBridge::focusNextRequested, this, [this]() {
+        focusNextChild();
+    });
 
     // Smart tab navigation from QML (switch to existing tab if already open)
     connect(m_tabsModel, &ZenTabsModel::tabActivated, this, [this](int index, bool focusSecondary) {
@@ -114,7 +125,8 @@ ZenDockPanel::ZenDockPanel(DolphinDockWidget *dock, DolphinMainWindow *mainWindo
         }
     });
 
-    KLocalization::setupLocalizedContext(m_quickWidget->engine());
+    auto *localizedContext = KLocalization::setupLocalizedContext(m_quickWidget->engine());
+    localizedContext->setTranslationDomain(QStringLiteral("dolphin"));
 
     m_quickWidget->setInitialProperties({
         {QStringLiteral("bridge"), QVariant::fromValue(m_bridge)}

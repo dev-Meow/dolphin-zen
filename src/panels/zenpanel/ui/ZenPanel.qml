@@ -38,7 +38,24 @@ Rectangle {
 
     focus: true
 
+    onActiveFocusChanged: {
+        if (activeFocus && !root.hasActiveChildFocus(root)) {
+            workspaceSection.focusFirstItem();
+        }
+    }
+
     Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Backtab) {
+            if (essentialsSection.hasActiveTileFocus() || essentialsSection.activeFocus
+                || (!essentialsSection.visible && workspaceSection.activeFocus)) {
+                if (root.bridge) {
+                    root.bridge.focusPreviousWidget();
+                }
+                event.accepted = true;
+                return;
+            }
+        }
+
         if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
             return;
         }

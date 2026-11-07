@@ -3226,7 +3226,9 @@ void DolphinMainWindow::toggleZenPanelFocus()
         return;
     }
 
-    if (m_zenPanel->hasFocus()) {
+    QWidget *focused = focusWidget();
+    const bool hasFocus = m_zenPanel->hasFocus() || (focused && m_zenPanel->isAncestorOf(focused));
+    if (hasFocus) {
         if (m_activeViewContainer) {
             m_activeViewContainer->view()->setFocus(Qt::FocusReason::ShortcutFocusReason);
         }

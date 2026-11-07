@@ -1297,6 +1297,42 @@ void ZenPanelBridge::openUrlInNewTab(const QUrl &url)
     Q_EMIT navigateRequested(i18nc("@info:status", "Opened in new tab:"), resolvedUrl);
 }
 
+void ZenPanelBridge::openUrlInSplitView(const QUrl &url)
+{
+    const QUrl resolvedUrl = KFilePlacesModel::convertedUrl(url);
+    if (!resolvedUrl.isValid()) {
+        return;
+    }
+
+    clearErrorMessage();
+    qCDebug(zenLog) << "[Action: openUrlInSplitView]" << resolvedUrl.toString();
+    Q_EMIT openInSplitViewRequested(resolvedUrl);
+    Q_EMIT navigateRequested(i18nc("@info:status", "Opened in split view:"), resolvedUrl);
+}
+
+void ZenPanelBridge::openUrlInNewWindow(const QUrl &url)
+{
+    const QUrl resolvedUrl = KFilePlacesModel::convertedUrl(url);
+    if (!resolvedUrl.isValid()) {
+        return;
+    }
+
+    clearErrorMessage();
+    qCDebug(zenLog) << "[Action: openUrlInNewWindow]" << resolvedUrl.toString();
+    Q_EMIT openInNewWindowRequested(resolvedUrl);
+    Q_EMIT navigateRequested(i18nc("@info:status", "Opened in new window:"), resolvedUrl);
+}
+
+void ZenPanelBridge::focusPreviousWidget()
+{
+    Q_EMIT focusPreviousRequested();
+}
+
+void ZenPanelBridge::focusNextWidget()
+{
+    Q_EMIT focusNextRequested();
+}
+
 void ZenPanelBridge::activateDevice(int proxyRow, bool inNewTab)
 {
     if (!m_devicesModel) {
@@ -1465,6 +1501,20 @@ void ZenPanelBridge::showEssentialsContextMenu(int proxyRow, const QPoint &globa
         openUrlInNewTab(placeUrl);
     });
 
+    QAction *openNewWindowAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("window-new")),
+        i18nc("@action:inmenu", "Open in New Window"));
+    QObject::connect(openNewWindowAction, &QAction::triggered, this, [this, placeUrl]() {
+        openUrlInNewWindow(placeUrl);
+    });
+
+    QAction *openSplitAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("view-split-left-right")),
+        i18nc("@action:inmenu", "Open in Split View"));
+    QObject::connect(openSplitAction, &QAction::triggered, this, [this, placeUrl]() {
+        openUrlInSplitView(placeUrl);
+    });
+
     menu.addSeparator();
 
     QAction *removeEssentialAction = menu.addAction(
@@ -1525,6 +1575,20 @@ void ZenPanelBridge::showWorkspacePlaceContextMenu(int proxyRow, const QPoint &g
         i18nc("@action:inmenu", "Open in New Tab"));
     QObject::connect(openNewTabAction, &QAction::triggered, this, [this, placeUrl]() {
         openUrlInNewTab(placeUrl);
+    });
+
+    QAction *openNewWindowAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("window-new")),
+        i18nc("@action:inmenu", "Open in New Window"));
+    QObject::connect(openNewWindowAction, &QAction::triggered, this, [this, placeUrl]() {
+        openUrlInNewWindow(placeUrl);
+    });
+
+    QAction *openSplitAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("view-split-left-right")),
+        i18nc("@action:inmenu", "Open in Split View"));
+    QObject::connect(openSplitAction, &QAction::triggered, this, [this, placeUrl]() {
+        openUrlInSplitView(placeUrl);
     });
 
     menu.addSeparator();
@@ -1682,6 +1746,20 @@ void ZenPanelBridge::showTrashContextMenu(int /*row*/, const QPoint &globalPos)
         openUrlInNewTab(trashUrl);
     });
 
+    QAction *openNewWindowAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("window-new")),
+        i18nc("@action:inmenu", "Open in New Window"));
+    QObject::connect(openNewWindowAction, &QAction::triggered, this, [this, trashUrl]() {
+        openUrlInNewWindow(trashUrl);
+    });
+
+    QAction *openSplitAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("view-split-left-right")),
+        i18nc("@action:inmenu", "Open in Split View"));
+    QObject::connect(openSplitAction, &QAction::triggered, this, [this, trashUrl]() {
+        openUrlInSplitView(trashUrl);
+    });
+
     QAction *propertiesAction = menu.addAction(
         QIcon::fromTheme(QStringLiteral("document-properties")),
         i18nc("@action:inmenu", "Properties"));
@@ -1715,6 +1793,22 @@ void ZenPanelBridge::showDevicesContextMenu(int row, const QPoint &globalPos)
     QObject::connect(openNewTabAction, &QAction::triggered, this, [this, row]() {
         activateDevice(row, /*inNewTab=*/true);
     });
+
+    if (targetUrl.isValid()) {
+        QAction *openNewWindowAction = menu.addAction(
+            QIcon::fromTheme(QStringLiteral("window-new")),
+            i18nc("@action:inmenu", "Open in New Window"));
+        QObject::connect(openNewWindowAction, &QAction::triggered, this, [this, targetUrl]() {
+            openUrlInNewWindow(targetUrl);
+        });
+
+        QAction *openSplitAction = menu.addAction(
+            QIcon::fromTheme(QStringLiteral("view-split-left-right")),
+            i18nc("@action:inmenu", "Open in Split View"));
+        QObject::connect(openSplitAction, &QAction::triggered, this, [this, targetUrl]() {
+            openUrlInSplitView(targetUrl);
+        });
+    }
 
     QAction *pinDeviceAction = menu.addAction(
         QIcon::fromTheme(QStringLiteral("pin")),
@@ -1818,6 +1912,20 @@ void ZenPanelBridge::showFolderContextMenu(const QUrl &url, const QPoint &global
         i18nc("@action:inmenu", "Open in New Tab"));
     QObject::connect(openNewTabAction, &QAction::triggered, this, [this, url]() {
         openUrlInNewTab(url);
+    });
+
+    QAction *openNewWindowAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("window-new")),
+        i18nc("@action:inmenu", "Open in New Window"));
+    QObject::connect(openNewWindowAction, &QAction::triggered, this, [this, url]() {
+        openUrlInNewWindow(url);
+    });
+
+    QAction *openSplitAction = menu.addAction(
+        QIcon::fromTheme(QStringLiteral("view-split-left-right")),
+        i18nc("@action:inmenu", "Open in Split View"));
+    QObject::connect(openSplitAction, &QAction::triggered, this, [this, url]() {
+        openUrlInSplitView(url);
     });
 
     const int existingRow = m_masterModel->rowForUrl(url);

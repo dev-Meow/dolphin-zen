@@ -351,6 +351,10 @@ public:
 public Q_SLOTS:
     void openUrl(const QUrl &url);
     void openUrlInNewTab(const QUrl &url);
+    void openUrlInSplitView(const QUrl &url);
+    void openUrlInNewWindow(const QUrl &url);
+    void focusPreviousWidget();
+    void focusNextWidget();
     void activateDevice(int proxyRow, bool inNewTab = false);
     void handleUrlDrop(const QUrl &targetUrl, const QList<QUrl> &droppedUrls, const QPoint &globalPos);
     void handleDeviceDrop(int deviceProxyRow, const QList<QUrl> &droppedUrls, const QPoint &globalPos);
@@ -401,6 +405,10 @@ Q_SIGNALS:
     void navigateRequested(const QString &actionText, const QUrl &url);
     void urlActivated(const QUrl &url);
     void urlInNewTabActivated(const QUrl &url);
+    void openInSplitViewRequested(const QUrl &url);
+    void openInNewWindowRequested(const QUrl &url);
+    void focusPreviousRequested();
+    void focusNextRequested();
 
 private:
     QModelIndex resolveMasterSourceIndex(QAbstractItemModel *proxyModel, int proxyRow) const;

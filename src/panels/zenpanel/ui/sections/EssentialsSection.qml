@@ -206,6 +206,13 @@ Item {
                     root.targetHoverSlot = -1;
                 }
 
+                Keys.onBacktabPressed: function(event) {
+                    if (tileDelegate.index === 0 && root.bridge) {
+                        root.bridge.focusPreviousWidget();
+                        event.accepted = true;
+                    }
+                }
+
                 Keys.onLeftPressed: function(event) {
                     if (root.bridge) {
                         root.bridge.notifyKeyboardInteraction();
