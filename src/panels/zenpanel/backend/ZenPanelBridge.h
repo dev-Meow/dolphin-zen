@@ -1,11 +1,17 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #pragma once
 
-#include <QObject>
-#include <QUrl>
-#include <QPoint>
 #include <QList>
+#include <QObject>
 #include <QPersistentModelIndex>
+#include <QPoint>
 #include <QPointer>
+#include <QUrl>
 #include <QtQml/qqmlregistration.h>
 
 class QDialog;
@@ -29,20 +35,22 @@ class ZenPanelBridge : public QObject
     Q_PROPERTY(bool expandNetworkFolder READ expandNetworkFolder WRITE setExpandNetworkFolder NOTIFY expandNetworkFolderChanged FINAL)
     Q_PROPERTY(bool highlightOpenTabPlaces READ highlightOpenTabPlaces WRITE setHighlightOpenTabPlaces NOTIFY highlightOpenTabPlacesChanged FINAL)
     Q_PROPERTY(bool switchToExistingTab READ switchToExistingTab WRITE setSwitchToExistingTab NOTIFY switchToExistingTabChanged FINAL)
+    Q_PROPERTY(bool hideEssentialsInWorkspace READ hideEssentialsInWorkspace WRITE setHideEssentialsInWorkspace NOTIFY hideEssentialsInWorkspaceChanged FINAL)
     Q_PROPERTY(int maxEssentials READ maxEssentials WRITE setMaxEssentials NOTIFY maxEssentialsChanged FINAL)
     Q_PROPERTY(bool showAddEssentialButton READ showAddEssentialButton WRITE setShowAddEssentialButton NOTIFY showAddEssentialButtonChanged FINAL)
     Q_PROPERTY(int essentialsIconStyle READ essentialsIconStyle WRITE setEssentialsIconStyle NOTIFY essentialsIconStyleChanged FINAL)
     Q_PROPERTY(bool showTrashSection READ showTrashSection WRITE setShowTrashSection NOTIFY showTrashSectionChanged FINAL)
     Q_PROPERTY(int globalIconStyle READ globalIconStyle WRITE setGlobalIconStyle NOTIFY globalIconStyleChanged FINAL)
-    Q_PROPERTY(bool preferOutlineIcons READ preferOutlineIcons WRITE setPreferOutlineIcons NOTIFY preferOutlineIconsChanged FINAL)
     Q_PROPERTY(int customEssentialsIconSize READ customEssentialsIconSize WRITE setCustomEssentialsIconSize NOTIFY customSectionIconSizesChanged FINAL)
     Q_PROPERTY(int customPlacesIconSize READ customPlacesIconSize WRITE setCustomPlacesIconSize NOTIFY customSectionIconSizesChanged FINAL)
     Q_PROPERTY(int customDevicesIconSize READ customDevicesIconSize WRITE setCustomDevicesIconSize NOTIFY customSectionIconSizesChanged FINAL)
     Q_PROPERTY(int customTreeIconSize READ customTreeIconSize WRITE setCustomTreeIconSize NOTIFY customSectionIconSizesChanged FINAL)
+    Q_PROPERTY(int customTrashIconSize READ customTrashIconSize WRITE setCustomTrashIconSize NOTIFY customSectionIconSizesChanged FINAL)
     Q_PROPERTY(int customEssentialsIconStyle READ customEssentialsIconStyle WRITE setCustomEssentialsIconStyle NOTIFY customSectionIconStylesChanged FINAL)
     Q_PROPERTY(int customPlacesIconStyle READ customPlacesIconStyle WRITE setCustomPlacesIconStyle NOTIFY customSectionIconStylesChanged FINAL)
     Q_PROPERTY(int customDevicesIconStyle READ customDevicesIconStyle WRITE setCustomDevicesIconStyle NOTIFY customSectionIconStylesChanged FINAL)
     Q_PROPERTY(int customTreeIconStyle READ customTreeIconStyle WRITE setCustomTreeIconStyle NOTIFY customSectionIconStylesChanged FINAL)
+    Q_PROPERTY(int customTrashIconStyle READ customTrashIconStyle WRITE setCustomTrashIconStyle NOTIFY customSectionIconStylesChanged FINAL)
     Q_PROPERTY(int themeMetricsRevision READ themeMetricsRevision NOTIFY themeMetricsChanged FINAL)
     Q_PROPERTY(int defaultWorkspaceView READ defaultWorkspaceView WRITE setDefaultWorkspaceView NOTIFY defaultWorkspaceViewChanged FINAL)
     Q_PROPERTY(bool limitTreeToHome READ limitTreeToHome WRITE setLimitTreeToHome NOTIFY limitTreeToHomeChanged FINAL)
@@ -58,8 +66,14 @@ class ZenPanelBridge : public QObject
     Q_PROPERTY(int essentialsIconSize READ essentialsIconSize NOTIFY themeMetricsChanged FINAL)
     Q_PROPERTY(int devicesIconSize READ devicesIconSize NOTIFY themeMetricsChanged FINAL)
     Q_PROPERTY(int treeIconSize READ treeIconSize NOTIFY themeMetricsChanged FINAL)
+    Q_PROPERTY(int trashIconSize READ trashIconSize NOTIFY themeMetricsChanged FINAL)
+    Q_PROPERTY(bool panelsLocked READ panelsLocked WRITE setPanelsLocked NOTIFY panelsLockedChanged FINAL)
+    Q_PROPERTY(int devicesSectionHeight READ devicesSectionHeight WRITE setDevicesSectionHeight NOTIFY sectionSizesChanged FINAL)
+    Q_PROPERTY(int horizontalEssentialsWidth READ horizontalEssentialsWidth WRITE setHorizontalEssentialsWidth NOTIFY sectionSizesChanged FINAL)
+    Q_PROPERTY(int horizontalDevicesWidth READ horizontalDevicesWidth WRITE setHorizontalDevicesWidth NOTIFY sectionSizesChanged FINAL)
     Q_PROPERTY(int essentialsTileWidth READ essentialsTileWidth NOTIFY themeMetricsChanged FINAL)
     Q_PROPERTY(int essentialsTileHeight READ essentialsTileHeight NOTIFY themeMetricsChanged FINAL)
+    Q_PROPERTY(bool contextMenuActive READ isContextMenuActive NOTIFY contextMenuActiveChanged FINAL)
     Q_PROPERTY(int placesIconSizeSetting READ placesIconSizeSetting WRITE setPlacesIconSizeSetting NOTIFY placesIconSizeSettingChanged FINAL)
     Q_PROPERTY(int lateralMargin READ lateralMargin NOTIFY themeMetricsChanged FINAL)
     Q_PROPERTY(int itemRadius READ itemRadius NOTIFY themeMetricsChanged FINAL)
@@ -114,6 +128,9 @@ public:
     bool switchToExistingTab() const;
     void setSwitchToExistingTab(bool switchTab);
 
+    bool hideEssentialsInWorkspace() const;
+    void setHideEssentialsInWorkspace(bool hide);
+
     int maxEssentials() const;
     void setMaxEssentials(int max);
 
@@ -138,9 +155,6 @@ public:
     int globalIconStyle() const;
     void setGlobalIconStyle(int style);
 
-    bool preferOutlineIcons() const;
-    void setPreferOutlineIcons(bool prefer);
-
     int customEssentialsIconSize() const;
     void setCustomEssentialsIconSize(int size);
 
@@ -153,6 +167,9 @@ public:
     int customTreeIconSize() const;
     void setCustomTreeIconSize(int size);
 
+    int customTrashIconSize() const;
+    void setCustomTrashIconSize(int size);
+
     int customEssentialsIconStyle() const;
     void setCustomEssentialsIconStyle(int style);
 
@@ -164,6 +181,9 @@ public:
 
     int customTreeIconStyle() const;
     void setCustomTreeIconStyle(int style);
+
+    int customTrashIconStyle() const;
+    void setCustomTrashIconStyle(int style);
 
     int themeMetricsRevision() const;
 
@@ -183,7 +203,7 @@ public:
     Q_INVOKABLE int sectionIconSize(const QString &section) const;
 
     /**
-     * @brief Resolves base icon (string name or QIcon) to "-symbolic" variant if preferOutlineIcons is enabled.
+     * @brief Resolves base icon (string name or QIcon) respecting the global icon style.
      */
     Q_INVOKABLE QString resolveIconName(const QVariant &baseIcon) const;
 
@@ -206,10 +226,25 @@ public:
     int essentialsIconSize() const;
     int placesIconSize() const;
     int devicesIconSize() const;
+    int trashIconSize() const;
     int placesRowHeight() const;
     int devicesRowHeight() const;
     int essentialsTileWidth() const;
     int essentialsTileHeight() const;
+
+    bool panelsLocked() const;
+    void setPanelsLocked(bool locked);
+
+    int devicesSectionHeight() const;
+    void setDevicesSectionHeight(int height);
+
+    int horizontalEssentialsWidth() const;
+    void setHorizontalEssentialsWidth(int width);
+
+    int horizontalDevicesWidth() const;
+    void setHorizontalDevicesWidth(int width);
+
+    Q_INVOKABLE void saveSectionSizes();
 
     /**
      * @brief Returns the active look and feel mode (0: DolphinCompact, 1: SystemKirigami).
@@ -293,6 +328,16 @@ public:
     Q_INVOKABLE void notifyTouchInteraction(const QString &section = QString());
 
     /**
+     * @brief Returns the system mouse wheel scroll lines setting (from QApplication::wheelScrollLines()).
+     */
+    Q_INVOKABLE int wheelScrollLines() const;
+
+    /**
+     * @brief Returns the user-configurable scroll speed multiplier (1.0 = system standard, 1.4 = Dolphin feeling).
+     */
+    Q_INVOKABLE double wheelScrollSpeedModifier() const;
+
+    /**
      * @brief Returns the latest human-readable error message from KIO or Solid (empty if none).
      */
     QString lastErrorMessage() const;
@@ -316,6 +361,34 @@ public:
     Q_INVOKABLE int essentialsCount() const;
     Q_INVOKABLE bool canAddEssential() const;
     Q_INVOKABLE QString essentialSlotText() const;
+
+    /**
+     * @brief Shows a native top-level desktop tooltip at the specified global position.
+     *
+     * This bypasses QQuickWidget viewport clipping so tooltips float seamlessly across panel borders.
+     */
+    Q_INVOKABLE void showToolTip(const QPointF &globalPos, const QString &text);
+
+    /**
+     * @brief Hides the currently active native desktop tooltip.
+     */
+    Q_INVOKABLE void hideToolTip();
+
+    /**
+     * @brief Returns true while an active context menu is opened from ZenPanel.
+     */
+    bool isContextMenuActive() const
+    {
+        return m_contextMenuActive;
+    }
+    void setContextMenuActive(bool active);
+
+    /**
+     * @brief Emits notify signals for all configuration properties to update QML bindings.
+     *
+     * Used when settings are modified or restored externally (e.g. from DolphinSettingsDialog).
+     */
+    Q_INVOKABLE void notifySettingsChanged();
 
     /**
      * @brief Pre-flight check using KProtocolManager::supportsWriting (or unmounted device check) before accepting a file drop.
@@ -381,6 +454,7 @@ Q_SIGNALS:
     void expandNetworkFolderChanged();
     void highlightOpenTabPlacesChanged();
     void switchToExistingTabChanged();
+    void hideEssentialsInWorkspaceChanged();
     void maxEssentialsChanged();
     void showAddEssentialButtonChanged();
     void essentialsIconStyleChanged();
@@ -389,9 +463,10 @@ Q_SIGNALS:
     void showHiddenFoldersInTreeChanged();
     void showTrashSectionChanged();
     void globalIconStyleChanged();
-    void preferOutlineIconsChanged();
     void customSectionIconSizesChanged();
     void customSectionIconStylesChanged();
+    void panelsLockedChanged();
+    void sectionSizesChanged();
     void lookFeelModeChanged();
     void themeMetricsChanged();
     void placesIconSizeSettingChanged();
@@ -402,6 +477,7 @@ Q_SIGNALS:
     void activeSectionChanged();
     void focusedItemDescriptionChanged();
     void lastErrorMessageChanged();
+    void contextMenuActiveChanged();
     void navigateRequested(const QString &actionText, const QUrl &url);
     void urlActivated(const QUrl &url);
     void urlInNewTabActivated(const QUrl &url);
@@ -417,8 +493,10 @@ private:
     void executeDropOnUrl(const QUrl &targetUrl, const QList<QUrl> &droppedUrls, const QPoint &globalPos);
 
     Qt::Orientation m_panelOrientation = Qt::Vertical;
+    bool m_panelsLocked = true;
     bool m_keyboardNavigationActive = false;
     bool m_touchInteractionActive = false;
+    bool m_contextMenuActive = false;
     QString m_activeSection = QStringLiteral("essentials");
     QString m_focusedItemDescription;
     QString m_lastErrorMessage;
@@ -440,4 +518,6 @@ private:
     ZenFolderTreeModel *m_treeModel = nullptr;
     QPointer<QDialog> m_settingsDialog;
     int m_themeMetricsRevision = 0;
+    mutable QHash<QString, QIcon> m_colorIconCache;
+    mutable QHash<QString, QString> m_symbolicIconCache;
 };

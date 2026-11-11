@@ -1,11 +1,17 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #pragma once
 
 #include <KDirSortFilterProxyModel>
 #include <KFileItem>
-#include <QUrl>
-#include <QModelIndex>
-#include <QHash>
 #include <QByteArray>
+#include <QHash>
+#include <QModelIndex>
+#include <QUrl>
 #include <QtQml/qqmlregistration.h>
 
 class KDirModel;
@@ -28,6 +34,11 @@ class ZenFolderTreeModel : public KDirSortFilterProxyModel
 public:
     explicit ZenFolderTreeModel(QObject *parent = nullptr);
     ~ZenFolderTreeModel() override;
+
+    /**
+     * @brief Strictly limit the tree model to a single column (Name) to prevent TableView multi-column layout.
+     */
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /**
      * @brief Ensures Qt::DisplayRole returns a non-empty name for column 0.

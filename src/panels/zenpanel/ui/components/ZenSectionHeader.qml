@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 
 Item {
@@ -16,6 +19,7 @@ Item {
     property string actionToolTipText: ""
     property bool actionCheckable: false
     property bool actionChecked: false
+    property ZenPanelBridge bridge: null
 
     // Dwell duration for drag-hover auto-expand in ms (KDE Dolphin standard: 750 ms)
     property int dragHoverInterval: 750
@@ -38,7 +42,7 @@ Item {
         spacing: Kirigami.Units.smallSpacing
 
         // Section title (adheres cleanly to global KDE/Dolphin font settings)
-        Controls.Label {
+        QQC2.Label {
             id: label
             Layout.fillWidth: true
             text: root.text
@@ -52,7 +56,7 @@ Item {
         }
 
         // Optional action button (e.g. view toggle or pin toggle)
-        Controls.ToolButton {
+        QQC2.ToolButton {
             id: actionButton
             visible: root.showActionButton && root.actionIconName.length > 0
             enabled: root.actionEnabled
@@ -139,7 +143,11 @@ Item {
             }
 
             Keys.onPressed: function(event) {
-                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                if (event.key === Qt.Key_Space) {
+                    event.accepted = true;
+                    return;
+                }
+                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                     actionButton.triggerAction();
                     event.accepted = true;
                 }
@@ -152,6 +160,7 @@ Item {
     }
 
     ZenToolTip {
+        bridge: root.bridge
         hovered: actionButton.hovered && !actionButton.down
         keyboardFocused: actionButton.activeFocus
         text: root.actionToolTipText

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick

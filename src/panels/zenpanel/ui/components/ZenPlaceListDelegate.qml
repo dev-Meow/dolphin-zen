@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
 
@@ -56,7 +59,7 @@ Item {
     property int externalDropMode: 0
 
     implicitWidth: Kirigami.Units.gridUnit * 10
-    implicitHeight: root.bridge ? root.bridge.placesRowHeight : Math.round(Kirigami.Units.gridUnit * 2.0)
+    implicitHeight: root.bridge ? root.bridge.placesRowHeight : Math.round(Kirigami.Units.gridUnit * 1.35)
     opacity: root.isDragging ? 0.35 : (root.isHidden ? 0.6 : 1.0)
     scale: root.isHeld ? 1.03 : 1.0
     z: root.isDragging ? 100 : 0
@@ -90,9 +93,12 @@ Item {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.25);
             }
             if (mouseArea.containsPress) {
-                return Kirigami.Theme.focusColor;
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.35);
             }
-            if (hoverHandler.hovered && (!root.bridge || (!root.bridge.keyboardNavigationActive && !root.bridge.touchInteractionActive))) {
+            if (root.isItemFocused) {
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.12);
+            }
+            if (hoverHandler.hovered) {
                 return Kirigami.Theme.hoverColor;
             }
             if (root.isCurrentLocation) {
@@ -104,7 +110,7 @@ Item {
             return "transparent";
         }
 
-        border.color: ((root.isItemFocused && (!root.bridge || root.bridge.keyboardNavigationActive)) || root.isHeld || (dropArea.containsDrag && root.externalDropMode === 0)) ? Kirigami.Theme.focusColor : "transparent"
+        border.color: (root.isItemFocused || root.isHeld || (dropArea.containsDrag && root.externalDropMode === 0)) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
         border.width: 1
 
         Behavior on color {
@@ -196,27 +202,23 @@ Item {
     // Visual content: Icon + Title
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin: root.bridge ? (root.bridge.lateralMargin + 1) : (Kirigami.Units.smallSpacing + 1)
-        anchors.rightMargin: root.bridge ? (root.bridge.lateralMargin + 1) : (Kirigami.Units.smallSpacing + 1)
+        anchors.leftMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
+        anchors.rightMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
         spacing: root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing
         z: 0
 
-        Kirigami.Icon {
+        ZenSectionIcon {
             Layout.preferredWidth: root.bridge ? root.bridge.placesIconSize : Kirigami.Units.iconSizes.smallMedium
             Layout.preferredHeight: Layout.preferredWidth
             Layout.alignment: Qt.AlignVCenter
-            source: {
-                if (!root.bridge) {
-                    return root.decoration ? root.decoration : "folder";
-                }
-                const _rev = root.bridge.themeMetricsRevision;
-                return root.bridge.resolveSectionIcon(root.decoration ? root.decoration : "folder", "places");
-            }
-            isMask: root.bridge ? root.bridge.isSectionIconMask(root.decoration, "places") : false
-            color: (root.isCurrentLocation || root.isItemFocused) ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+            bridge: root.bridge
+            section: "places"
+            iconName: root.decoration
+            fallbackIcon: "folder"
+            highlighted: root.isCurrentLocation || root.isItemFocused
         }
 
-        Controls.Label {
+        QQC2.Label {
             Layout.fillWidth: true
             text: root.display
             elide: Text.ElideRight
@@ -402,7 +404,7 @@ Item {
                 source: root.decoration ? root.decoration : "folder"
             }
 
-            Controls.Label {
+            QQC2.Label {
                 Layout.fillWidth: true
                 text: root.display
                 elide: Text.ElideRight

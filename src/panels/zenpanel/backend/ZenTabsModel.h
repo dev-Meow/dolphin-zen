@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #pragma once
 
 #include <QAbstractListModel>
@@ -9,7 +15,7 @@ struct ZenTabInfo {
     int index = 0;
     QString title;
     QUrl primaryUrl;
-    QUrl secondaryUrl;        // Leer bei inaktivem Split-View
+    QUrl secondaryUrl; // Empty when split-view is inactive
     QString iconName = QStringLiteral("folder");
     bool isSplitActive = false;
     bool isSecondaryFocused = false;

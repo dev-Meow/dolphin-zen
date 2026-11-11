@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Meow <meow@example.com>
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
  * @file ZenSettingsWidget.h
@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <QWidget>
 #include <QPointer>
+#include <QWidget>
 
 class QQuickWidget;
 class ZenPanelBridge;
@@ -31,6 +31,16 @@ public:
     ~ZenSettingsWidget() override = default;
 
     /**
+     * @brief Recommended default size for embedding inside configuration dialogs.
+     */
+    QSize sizeHint() const override;
+
+    /**
+     * @brief Minimum viable size preventing layout collapse.
+     */
+    QSize minimumSizeHint() const override;
+
+    /**
      * @brief Returns the underlying QQuickWidget rendering the settings QML component.
      */
     QQuickWidget *quickWidget() const;
@@ -45,4 +55,3 @@ private:
     QQuickWidget *m_quickWidget = nullptr;
     QPointer<ZenPanelBridge> m_bridge;
 };
-

@@ -1,16 +1,22 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include "ZenFolderTreeModel.h"
 #include "zenpanelsettings.h"
 
-#include <KDirModel>
+#include <KConfigGroup>
 #include <KDirLister>
+#include <KDirModel>
 #include <KFileItem>
 #include <KSharedConfig>
-#include <KConfigGroup>
 #include <QDir>
 
 ZenFolderTreeModel::ZenFolderTreeModel(QObject *parent)
-: KDirSortFilterProxyModel(parent)
-, m_dirModel(new KDirModel(this))
+    : KDirSortFilterProxyModel(parent)
+    , m_dirModel(new KDirModel(this))
 {
     auto *settings = ZenPanelSettings::self();
     const bool limitHome = settings->limitTreeToHome();
@@ -29,7 +35,13 @@ ZenFolderTreeModel::ZenFolderTreeModel(QObject *parent)
 
 ZenFolderTreeModel::~ZenFolderTreeModel() = default;
 
-bool ZenFolderTreeModel::filterAcceptsColumn(int sourceColumn, const QModelIndex &/*sourceParent*/) const
+int ZenFolderTreeModel::columnCount(const QModelIndex & /*parent*/) const
+{
+    // Ensure the model is strictly single-column regardless of source model column definitions
+    return 1;
+}
+
+bool ZenFolderTreeModel::filterAcceptsColumn(int sourceColumn, const QModelIndex & /*sourceParent*/) const
 {
     // KDirModel exposes multiple metadata columns; restrict proxy strictly to the Name column
     return sourceColumn == KDirModel::Name;
@@ -57,6 +69,18 @@ QVariant ZenFolderTreeModel::data(const QModelIndex &index, int role) const
                 return item.text();
             }
         }
+    }
+
+    if (role == Qt::DecorationRole) {
+        const QModelIndex srcIndex = mapToSource(index);
+        if (srcIndex.isValid()) {
+            const KFileItem item = m_dirModel->itemForIndex(srcIndex);
+            if (!item.isNull()) {
+                const QString iconName = item.iconName();
+                return !iconName.isEmpty() ? iconName : QStringLiteral("folder");
+            }
+        }
+        return QStringLiteral("folder");
     }
 
     return KDirSortFilterProxyModel::data(index, role);

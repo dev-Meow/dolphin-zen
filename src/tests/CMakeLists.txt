@@ -127,6 +127,11 @@ ecm_add_test(placespaneltest.cpp
     TEST_NAME placespaneltest
     LINK_LIBRARIES dolphinprivate dolphinstatic Qt6::Test)
 
+# ZenHostInterfaceTest
+ecm_add_test(zenhostinterfacetest.cpp
+    TEST_NAME zenhostinterfacetest
+    LINK_LIBRARIES zenpanel_panel dolphinstatic dolphinprivate Qt6::Test)
+
 find_gem(test-unit)
 set_package_properties(Gem_test-unit PROPERTIES
     TYPE RECOMMENDED

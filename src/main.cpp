@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     KIconTheme::initTheme();
 
     QApplication app(argc, argv);
-    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("org.kde.dolphin"), app.windowIcon()));
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("org.kde.dolphin-zen"), QIcon(QStringLiteral(":/icons/org.kde.dolphin-zen.svg"))));
 
 #if HAVE_STYLE_MANAGER
     /**
@@ -93,12 +93,16 @@ int main(int argc, char **argv)
     KLocalizedString::setApplicationDomain(dolphinTranslationDomain);
 
     KAboutData aboutData(QStringLiteral("dolphin"),
-                         i18n("Dolphin"),
+                         QStringLiteral("Dolphin-Zen"),
                          QStringLiteral(DOLPHIN_VERSION_STRING),
                          i18nc("@title", "File Manager"),
                          KAboutLicense::GPL,
-                         i18nc("@info:credit", "© 2006–2025 The Dolphin Developers"));
-    aboutData.setHomepage(QStringLiteral("https://apps.kde.org/dolphin"));
+                         i18nc("@info:credit", "© 2006–2026 The Dolphin Developers & dev-Meow"));
+    aboutData.setDesktopFileName(QStringLiteral("org.kde.dolphin-zen"));
+    aboutData.setHomepage(QStringLiteral("https://github.com/dev-Meow/dolphin-zen"));
+    aboutData.addAuthor(i18nc("@info:credit", "dev-Meow"),
+                        i18nc("@info:credit", "Zen Panel author and maintainer"),
+                        QStringLiteral("355019589+dev-Meow@users.noreply.github.com"));
     aboutData.addAuthor(i18nc("@info:credit", "Felix Ernst"),
                         i18nc("@info:credit", "Maintainer (since 2021) and developer"),
                         QStringLiteral("felixernst@kde.org"));
@@ -127,6 +131,7 @@ int main(int argc, char **argv)
     aboutData.addAuthor(i18nc("@info:credit", "Michael Austin"), i18nc("@info:credit", "Documentation"), QStringLiteral("tuxedup@users.sourceforge.net"));
 
     KAboutData::setApplicationData(aboutData);
+    QGuiApplication::setDesktopFileName(QStringLiteral("org.kde.dolphin-zen"));
     KCrash::initialize();
 
     QCommandLineParser parser;
@@ -241,7 +246,7 @@ int main(int argc, char **argv)
     // Only restore session if:
     // 1. The "remember state" setting is enabled or session restoration after
     //    reboot is in use
-    // 2. This is the first instance or restoring multiple instances with 
+    // 2. This is the first instance or restoring multiple instances with
     //    session restoration after reboot enabled
     // 3. There is a session available to restore
     if (app.isSessionRestored() || GeneralSettings::rememberOpenedTabs()) {

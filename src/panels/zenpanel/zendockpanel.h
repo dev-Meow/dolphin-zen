@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2026 Meow <meow@zenpanel.local>
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -8,8 +8,8 @@
 #define ZENDOCKPANEL_H
 
 #include "panels/panel.h"
-#include <QUrl>
 #include <QPointer>
+#include <QUrl>
 
 class QQuickWidget;
 class DolphinDockWidget;
@@ -43,6 +43,29 @@ public:
      */
     void readSettings() override;
 
+    /**
+     * @brief Moves keyboard focus cleanly into ZenPanel and activates keyboard focus navigation.
+     */
+    void focusPanel();
+
+    /**
+     * @brief Returns the active ZenPanel bridge instance for UI bindings and configuration.
+     * @return ZenPanelBridge pointer, or nullptr if not initialized.
+     */
+    ZenPanelBridge *bridge() const
+    {
+        return m_bridge;
+    }
+
+    /**
+     * @brief Returns the embedded QQuickWidget hosting the Kirigami user interface.
+     * @return Pointer to internal QQuickWidget.
+     */
+    QQuickWidget *quickWidget() const
+    {
+        return m_quickWidget;
+    }
+
 public Q_SLOTS:
     /**
      * @brief Invoked when Dolphin's active folder URL changes.
@@ -59,6 +82,7 @@ Q_SIGNALS:
 
 protected:
     bool urlChanged() override;
+    void focusInEvent(QFocusEvent *event) override;
 
 private Q_SLOTS:
     void slotSyncTabs();

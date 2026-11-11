@@ -407,8 +407,8 @@ void DolphinTabWidget::detachTab(int index)
     }
     args << QStringLiteral("--new-window");
 
-    KIO::CommandLauncherJob *job = new KIO::CommandLauncherJob("dolphin", args, this);
-    job->setDesktopName(QStringLiteral("org.kde.dolphin"));
+    KIO::CommandLauncherJob *job = new KIO::CommandLauncherJob(QStringLiteral("dolphin-zen"), args, this);
+    job->setDesktopName(QStringLiteral("org.kde.dolphin-zen"));
     job->start();
 
     closeTab(index);

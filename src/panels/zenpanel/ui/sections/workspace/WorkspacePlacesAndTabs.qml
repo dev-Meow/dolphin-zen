@@ -1,13 +1,17 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls as Controls
+import QtQuick.Layouts
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
 import "../../components"
 
 /**
- * Scrollable list of regular workspace bookmarks and places (Section 3.2 - Places view).
+ * Scrollable list of regular workspace bookmarks and places.
  * Highlights entries that are currently active or open in any Dolphin tab / split-view.
  */
 Item {
@@ -63,7 +67,44 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
         model: root.placesModel
 
-        Controls.ScrollBar.vertical: ZenScrollBar {
+        section.property: "group"
+        section.criteria: ViewSection.FullString
+        section.delegate: Item {
+            id: sectionHeaderItem
+            required property string section
+            readonly property bool showHeader: sectionHeaderItem.section.length > 0
+
+            width: Math.max(0, placesListView.width - placesScrollBar.implicitWidth - 2)
+            height: sectionHeaderItem.showHeader ? sectionHeaderCol.implicitHeight : 0
+            visible: sectionHeaderItem.showHeader
+
+            ColumnLayout {
+                id: sectionHeaderCol
+                visible: sectionHeaderItem.showHeader
+                anchors.fill: parent
+                anchors.leftMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
+                anchors.rightMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
+                spacing: 2
+
+                Kirigami.Separator {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Kirigami.Units.smallSpacing
+                    weight: Kirigami.Separator.Weight.Light
+                }
+
+                QQC2.Label {
+                    Layout.fillWidth: true
+                    Layout.bottomMargin: 2
+                    text: sectionHeaderItem.section
+                    font.pointSize: Kirigami.Theme.smallFont.pointSize
+                    font.weight: Font.DemiBold
+                    color: Kirigami.Theme.disabledTextColor
+                    elide: Text.ElideRight
+                }
+            }
+        }
+
+        QQC2.ScrollBar.vertical: ZenScrollBar {
             id: placesScrollBar
             parent: placesListView
             x: placesListView.width - width
@@ -73,6 +114,12 @@ Item {
             sectionFocused: placesListView.activeFocus
         }
 
+        ZenWheelScroller {
+            flickable: placesListView
+            bridge: root.bridge
+            onScrolled: placesScrollBar.revealTemporarily()
+        }
+
         onActiveFocusChanged: {
             if (activeFocus && currentIndex < 0 && count > 0) {
                 currentIndex = 0;
@@ -80,7 +127,7 @@ Item {
         }
 
         onMovementStarted: {
-            if (root.bridge) {
+            if (root.bridge && (placesListView.dragging || placesListView.flicking)) {
                 root.bridge.notifyTouchInteraction("workspace");
             }
         }

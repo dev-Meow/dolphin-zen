@@ -66,6 +66,8 @@ void DolphinDockWidget::setLocked(bool lock)
             setTitleBarWidget(nullptr);
             setFeatures(DefaultDockWidgetFeatures);
         }
+
+        Q_EMIT lockedChanged(m_locked);
     }
 }
 

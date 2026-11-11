@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include "ZenPlacesMasterModel.h"
 #include "zenpanelsettings.h"
 
@@ -7,31 +13,25 @@
 #include <KLocalizedString>
 #include <KSharedConfig>
 #include <KShell>
-#include <Solid/StorageAccess>
 #include <QLoggingCategory>
 #include <QStorageInfo>
+#include <Solid/StorageAccess>
 
 Q_DECLARE_LOGGING_CATEGORY(zenLog)
 
 ZenPlacesMasterModel::ZenPlacesMasterModel(QObject *parent)
-: KFilePlacesModel(parent)
+    : KFilePlacesModel(parent)
 {
     loadEssentialMetadata();
 
     // Forward dynamic Solid device state changes (mount/unmount/accessibility) to custom Zen roles
     connect(this, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles) {
-        if (roles.contains(CapacityPercentageRole)
-            || roles.contains(FreeSpaceTextRole)
-            || roles.contains(IsEssentialRole)
-            || roles.contains(IsWorkspacePlaceRole)
-            || roles.contains(IsPinnedDeviceRole)) {
+        if (roles.contains(CapacityPercentageRole) || roles.contains(FreeSpaceTextRole) || roles.contains(IsEssentialRole)
+            || roles.contains(IsWorkspacePlaceRole) || roles.contains(IsPinnedDeviceRole)) {
             return;
         }
-        if (roles.isEmpty()
-            || roles.contains(KFilePlacesModel::CapacityBarRecommendedRole)
-            || roles.contains(KFilePlacesModel::DeviceAccessibilityRole)
-            || roles.contains(KFilePlacesModel::TeardownAllowedRole)
-            || roles.contains(KFilePlacesModel::EjectAllowedRole)
+        if (roles.isEmpty() || roles.contains(KFilePlacesModel::CapacityBarRecommendedRole) || roles.contains(KFilePlacesModel::DeviceAccessibilityRole)
+            || roles.contains(KFilePlacesModel::TeardownAllowedRole) || roles.contains(KFilePlacesModel::EjectAllowedRole)
             || roles.contains(KFilePlacesModel::SetupNeededRole)) {
             Q_EMIT dataChanged(topLeft, bottomRight, {CapacityPercentageRole, FreeSpaceTextRole, CanTeardownRole, FormattedPathRole});
         }
@@ -354,19 +354,31 @@ void ZenPlacesMasterModel::removeFromWorkspacePlaces(const QModelIndex &index)
     }
 
     const bool isEssential = data(index, IsEssentialRole).toBool();
-    if (isEssential) {
-        // Keep the underlying XBEL bookmark alive for the Essentials tile, just hide it from Workspace Places
+    if (isEssential || isSystemItem(index)) {
+        // Keep the underlying XBEL bookmark alive for system items or essentials,
+        // just hide it locally from ZenPanel's Workspace Places
         setData(index, false, IsWorkspacePlaceRole);
         return;
     }
 
-    if (!isSystemItem(index)) {
-        const QString key = placeKey(index);
-        KSharedConfig::openConfig()->group(QStringLiteral("ZenPanelEssentials")).deleteEntry(key);
-        KSharedConfig::openConfig()->group(QStringLiteral("ZenPanelWorkspacePlaces")).deleteEntry(key);
-        KSharedConfig::openConfig()->sync();
-        removePlace(index);
+    const QString key = placeKey(index);
+    KSharedConfig::openConfig()->group(QStringLiteral("ZenPanelEssentials")).deleteEntry(key);
+    KSharedConfig::openConfig()->group(QStringLiteral("ZenPanelWorkspacePlaces")).deleteEntry(key);
+    KSharedConfig::openConfig()->sync();
+    removePlace(index);
+}
+
+int ZenPlacesMasterModel::hiddenCount() const
+{
+    int count = KFilePlacesModel::hiddenCount();
+    const int total = rowCount();
+    for (int i = 0; i < total; ++i) {
+        const QModelIndex idx = index(i, 0);
+        if (!KFilePlacesModel::isHidden(idx) && !data(idx, IsWorkspacePlaceRole).toBool()) {
+            ++count;
+        }
     }
+    return count;
 }
 
 bool ZenPlacesMasterModel::addUrlToWorkspacePlaces(const QUrl &url, const QString &customTitle)
@@ -389,24 +401,6 @@ bool ZenPlacesMasterModel::addUrlToWorkspacePlaces(const QUrl &url, const QStrin
     }
 
     return false;
-}
-
-void ZenPlacesMasterModel::printDiagnosticPlaces() const
-{
-    qCDebug(zenLog) << "=== [WP 2.1 MasterModel Diagnostic] ===";
-    const int total = rowCount();
-    for (int i = 0; i < total; ++i) {
-        const QModelIndex idx = index(i, 0);
-        qCDebug(zenLog) << QStringLiteral("[%1]").arg(i)
-                        << "Display:" << data(idx, Qt::DisplayRole).toString()
-                        << "| Path:" << data(idx, FormattedPathRole).toString()
-                        << "| Group:" << data(idx, KFilePlacesModel::GroupRole).toString()
-                        << "| Hidden:" << data(idx, KFilePlacesModel::HiddenRole).toBool()
-                        << "| Essential:" << data(idx, IsEssentialRole).toBool()
-                        << "| PinnedDev:" << data(idx, IsPinnedDeviceRole).toBool()
-                        << "| Capacity%:" << data(idx, CapacityPercentageRole).toInt();
-    }
-    qCDebug(zenLog) << "=======================================";
 }
 
 void ZenPlacesMasterModel::loadEssentialMetadata()

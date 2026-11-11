@@ -334,6 +334,7 @@ target_sources(dolphinstatic PRIVATE
     settings/interface/interfacesettingspage.cpp
     settings/interface/previewssettingspage.cpp
     settings/dolphinsettingsdialog.cpp
+    settings/zensettingspage.cpp
     settings/contextmenu/contextmenusettingspage.cpp
     settings/settingspagebase.cpp
     settings/servicemodel.cpp
@@ -403,6 +404,7 @@ target_sources(dolphinstatic PRIVATE
     settings/interface/interfacesettingspage.h
     settings/interface/previewssettingspage.h
     settings/dolphinsettingsdialog.h
+    settings/zensettingspage.h
     settings/contextmenu/contextmenusettingspage.h
     settings/settingspagebase.h
     settings/servicemodel.h
@@ -512,6 +514,7 @@ if (HAVE_KUSERFEEDBACK)
 endif()
 
 add_executable(dolphin)
+set_target_properties(dolphin PROPERTIES OUTPUT_NAME dolphin-zen)
 
 target_sources(dolphin PRIVATE
     dbusinterface.cpp
@@ -526,15 +529,15 @@ endif()
 # Install the icons on macOS and Windows
 ecm_add_app_icon(dolphin
     ICONS
-        icons/128-apps-org.kde.dolphin.png
-        icons/16-apps-org.kde.dolphin.png
-        icons/22-apps-org.kde.dolphin.png
-        icons/32-apps-org.kde.dolphin.png
-        icons/48-apps-org.kde.dolphin.png
-        icons/64-apps-org.kde.dolphin.png
+        icons/128-apps-org.kde.dolphin-zen.png
+        icons/16-apps-org.kde.dolphin-zen.png
+        icons/22-apps-org.kde.dolphin-zen.png
+        icons/32-apps-org.kde.dolphin-zen.png
+        icons/48-apps-org.kde.dolphin-zen.png
+        icons/64-apps-org.kde.dolphin-zen.png
 )
 
-install(FILES icons/org.kde.dolphin.svg DESTINATION ${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps)
+install(FILES icons/org.kde.dolphin-zen.svg DESTINATION ${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps)
 
 target_link_libraries(dolphin
     PRIVATE
@@ -611,7 +614,7 @@ if(NOT WIN32)
     target_link_libraries(kcm_dolphinviewmodes dolphinprivate)
     target_link_libraries(kcm_dolphingeneral dolphinprivate)
 
-    install( FILES org.kde.dolphin.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR} )
+    install( FILES org.kde.dolphin-zen.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR} )
 
     install(TARGETS kcm_dolphinviewmodes DESTINATION ${KDE_INSTALL_PLUGINDIR}/dolphin/kcms )
     install(TARGETS kcm_dolphingeneral DESTINATION ${KDE_INSTALL_PLUGINDIR}/dolphin/kcms )
@@ -624,12 +627,12 @@ endif()
 
 ########### install files ###############
 
-install( PROGRAMS org.kde.dolphin.desktop DESTINATION ${KDE_INSTALL_APPDIR} )
+install( PROGRAMS org.kde.dolphin-zen.desktop DESTINATION ${KDE_INSTALL_APPDIR} )
 
 install( DIRECTORY DESTINATION "${KDE_INSTALL_FULL_DATAROOTDIR}/kglobalaccel" )
 
 install(
-    CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${KDE_INSTALL_FULL_APPDIR}/org.kde.dolphin.desktop\" \"\$ENV{DESTDIR}${KDE_INSTALL_FULL_DATAROOTDIR}/kglobalaccel/org.kde.dolphin.desktop\")"
+    CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${KDE_INSTALL_FULL_APPDIR}/org.kde.dolphin-zen.desktop\" \"\$ENV{DESTDIR}${KDE_INSTALL_FULL_DATAROOTDIR}/kglobalaccel/org.kde.dolphin-zen.desktop\")"
 )
 
 install( FILES settings/dolphin_directoryviewpropertysettings.kcfg

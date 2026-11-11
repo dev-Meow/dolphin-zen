@@ -1,10 +1,14 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
+import "../components"
 
 Item {
     id: root
@@ -31,13 +35,10 @@ Item {
     signal trashRightClicked(int row, point mousePos)
     signal trashUrlsDropped(url trashUrl, var droppedUrls, point globalPos)
 
-    implicitWidth: root.isHorizontal
-        ? (root.bridge ? root.bridge.essentialsTileWidth : Math.round(Kirigami.Units.gridUnit * 2.5))
-        : (Kirigami.Units.gridUnit * 10)
-    implicitHeight: root.isHorizontal
-        ? (root.bridge ? root.bridge.essentialsTileHeight : Math.round(Kirigami.Units.gridUnit * 2.5))
-        : (trashListView.count > 0 ? (root.bridge ? root.bridge.placesRowHeight : Math.round(Kirigami.Units.gridUnit * 2.0)) : 0)
+    readonly property int effectiveTrashIconSize: root.bridge ? root.bridge.trashIconSize : Kirigami.Units.iconSizes.smallMedium
 
+    implicitWidth: root.isHorizontal ? Math.max(root.effectiveTrashIconSize + Kirigami.Units.smallSpacing * 2, Math.round(Kirigami.Units.gridUnit * 1.8)) : (Kirigami.Units.gridUnit * 10)
+    implicitHeight: root.isHorizontal ? Math.max(root.effectiveTrashIconSize + Kirigami.Units.smallSpacing * 2, Math.round(Kirigami.Units.gridUnit * 1.8)) : (trashListView.count > 0 ? (root.bridge ? Math.max(root.effectiveTrashIconSize + (root.bridge.isDolphinStyle ? 6 : Kirigami.Units.smallSpacing * 2), 24) : Math.round(Kirigami.Units.gridUnit * 1.8)) : 0)
 
     ListView {
         id: trashListView
@@ -55,9 +56,16 @@ Item {
             }
         }
 
-        Keys.onPressed: function(event) {
+        Keys.onPressed: function (event) {
             if (root.bridge) {
                 root.bridge.notifyKeyboardInteraction();
+            }
+            if (event.key === Qt.Key_Tab) {
+                if (root.bridge) {
+                    root.bridge.focusNextWidget();
+                    event.accepted = true;
+                    return;
+                }
             }
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                 if (trashListView.count > 0) {
@@ -81,15 +89,11 @@ Item {
             readonly property bool listHasFocus: ListView.view ? ListView.view.activeFocus : false
             readonly property bool isItemFocused: trashDelegate.activeFocus || (isCurrentListItem && listHasFocus)
 
-            readonly property bool isCurrentLocation: root.tabsModel && root.tabsModel.revision >= 0
-                ? root.tabsModel.isUrlActive(trashDelegate.url)
-                : false
-            readonly property bool isOpenInAnyTab: root.highlightOpenTabPlaces && root.tabsModel && root.tabsModel.revision >= 0
-                ? root.tabsModel.hasUrl(trashDelegate.url)
-                : false
+            readonly property bool isCurrentLocation: root.tabsModel && root.tabsModel.revision >= 0 ? root.tabsModel.isUrlActive(trashDelegate.url) : false
+            readonly property bool isOpenInAnyTab: root.highlightOpenTabPlaces && root.tabsModel && root.tabsModel.revision >= 0 ? root.tabsModel.hasUrl(trashDelegate.url) : false
 
             width: trashListView.width
-            height: trashListView.height
+            height: root.implicitHeight
             opacity: trashDelegate.isHidden ? 0.6 : 1.0
 
             Accessible.role: root.isHorizontal ? Accessible.Button : Accessible.ListItem
@@ -102,9 +106,9 @@ Item {
                 }
             }
 
-            Controls.ToolTip.visible: root.isHorizontal && delegateHoverHandler.hovered
-            Controls.ToolTip.text: trashDelegate.display
-            Controls.ToolTip.delay: Kirigami.Units.toolTipDelay
+            QQC2.ToolTip.visible: root.isHorizontal && delegateHoverHandler.hovered
+            QQC2.ToolTip.text: trashDelegate.display
+            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
 
             Rectangle {
                 id: bgRect
@@ -119,7 +123,10 @@ Item {
                     if (trashMouseArea.containsPress) {
                         return Kirigami.Theme.focusColor;
                     }
-                    if (delegateHoverHandler.hovered && (!root.bridge || (!root.bridge.keyboardNavigationActive && !root.bridge.touchInteractionActive))) {
+                    if (trashDelegate.isItemFocused) {
+                        return Qt.alpha(Kirigami.Theme.focusColor, 0.12);
+                    }
+                    if (delegateHoverHandler.hovered) {
                         return Kirigami.Theme.hoverColor;
                     }
                     if (trashDelegate.isCurrentLocation) {
@@ -131,9 +138,7 @@ Item {
                     return root.isHorizontal ? Kirigami.Theme.alternateBackgroundColor : "transparent";
                 }
 
-                border.color: ((trashDelegate.isItemFocused && (!root.bridge || root.bridge.keyboardNavigationActive)) || trashDropArea.containsDrag)
-                    ? Kirigami.Theme.focusColor
-                    : "transparent"
+                border.color: (trashDelegate.isItemFocused || trashDropArea.containsDrag) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
                 border.width: 1
 
                 Behavior on color {
@@ -165,23 +170,18 @@ Item {
                 spacing: root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing
                 visible: !root.isHorizontal
 
-                Kirigami.Icon {
-                    Layout.preferredWidth: root.bridge ? root.bridge.placesIconSize : Kirigami.Units.iconSizes.smallMedium
+                ZenSectionIcon {
+                    Layout.preferredWidth: root.effectiveTrashIconSize
                     Layout.preferredHeight: Layout.preferredWidth
                     Layout.alignment: Qt.AlignVCenter
-                    source: {
-                        const src = trashDelegate.decoration ? trashDelegate.decoration : "user-trash";
-                        if (!root.bridge) {
-                            return src;
-                        }
-                        const _rev = root.bridge.themeMetricsRevision;
-                        return root.bridge.resolveSectionIcon(src, "trash");
-                    }
-                    isMask: root.bridge ? root.bridge.isSectionIconMask(trashDelegate.decoration, "trash") : false
-                    color: (trashDelegate.isCurrentLocation || trashDelegate.isItemFocused) ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+                    bridge: root.bridge
+                    section: "trash"
+                    iconName: trashDelegate.decoration
+                    fallbackIcon: "user-trash"
+                    highlighted: trashDelegate.isCurrentLocation || trashDelegate.isItemFocused
                 }
 
-                Controls.Label {
+                QQC2.Label {
                     Layout.fillWidth: true
                     text: trashDelegate.display
                     elide: Text.ElideRight
@@ -191,22 +191,19 @@ Item {
                 }
             }
 
-            // Horizontal layout: Centered Icon
-            Kirigami.Icon {
-                anchors.centerIn: parent
+            // Horizontal layout: Top-aligned Icon matching top row of other sections
+            ZenSectionIcon {
+                anchors.top: parent.top
+                anchors.topMargin: root.bridge ? (root.bridge.lateralMargin + 1) : (Kirigami.Units.smallSpacing + 1)
+                anchors.horizontalCenter: parent.horizontalCenter
                 visible: root.isHorizontal
-                width: root.bridge ? root.bridge.essentialsIconSize : Kirigami.Units.iconSizes.medium
+                width: root.effectiveTrashIconSize
                 height: width
-                source: {
-                    const src = trashDelegate.decoration ? trashDelegate.decoration : "user-trash";
-                    if (!root.bridge) {
-                        return src;
-                    }
-                    const _rev = root.bridge.themeMetricsRevision;
-                    return root.bridge.resolveSectionIcon(src, "trash");
-                }
-                isMask: root.bridge ? root.bridge.isSectionIconMask(trashDelegate.decoration, "trash") : false
-                color: (trashDelegate.isCurrentLocation || trashDelegate.isItemFocused) ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+                bridge: root.bridge
+                section: "trash"
+                iconName: trashDelegate.decoration
+                fallbackIcon: "user-trash"
+                highlighted: trashDelegate.isCurrentLocation || trashDelegate.isItemFocused
             }
 
             HoverHandler {
@@ -224,7 +221,7 @@ Item {
                     }
                 }
 
-                onClicked: function(mouse) {
+                onClicked: function (mouse) {
                     if (mouse.button === Qt.LeftButton) {
                         if (mouse.modifiers & Qt.ControlModifier) {
                             root.trashMiddleClicked(trashDelegate.url);
@@ -245,7 +242,7 @@ Item {
                 anchors.fill: parent
                 keys: ["text/uri-list"]
 
-                onDropped: function(drop) {
+                onDropped: function (drop) {
                     if (drop.hasUrls && drop.urls.length > 0) {
                         const globalPt = trashDelegate.mapToGlobal(drop.x, drop.y);
                         root.trashUrlsDropped(trashDelegate.url, drop.urls, Qt.point(Math.round(globalPt.x), Math.round(globalPt.y)));

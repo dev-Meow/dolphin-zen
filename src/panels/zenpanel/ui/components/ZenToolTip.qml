@@ -1,7 +1,10 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import QtQuick.Templates as T
 import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
@@ -77,6 +80,9 @@ T.ToolTip {
     function hideImmediately() {
         showTimer.stop();
         keyboardAutoHideTimer.stop();
+        if (root.bridge) {
+            root.bridge.hideToolTip();
+        }
         root.close();
     }
 
@@ -128,6 +134,12 @@ T.ToolTip {
     onTextChanged: {
         if (root.text.length === 0) {
             root.hideImmediately();
+        } else if (root.bridge && (root.hovered || (root.isKeyboardMode && root.keyboardFocused))) {
+            const parentItem = root.parent;
+            if (parentItem) {
+                const pt = parentItem.mapToGlobal(Math.round(parentItem.width / 2), root.placeBelow ? (parentItem.height + 4) : -4);
+                root.bridge.showToolTip(pt, root.text);
+            }
         } else if (root.visible) {
             root.updateVerticalPlacement();
         }
@@ -153,8 +165,14 @@ T.ToolTip {
             }
             const shouldOpen = root.isKeyboardMode ? root.keyboardFocused : root.hovered;
             if (shouldOpen && root.text.length > 0) {
-                root.updateVerticalPlacement();
-                root.open();
+                if (root.bridge && root.parent) {
+                    const parentItem = root.parent;
+                    const pt = parentItem.mapToGlobal(Math.round(parentItem.width / 2), root.placeBelow ? (parentItem.height + 4) : -4);
+                    root.bridge.showToolTip(pt, root.text);
+                } else {
+                    root.updateVerticalPlacement();
+                    root.open();
+                }
                 if (root.isKeyboardMode) {
                     keyboardAutoHideTimer.restart();
                 }
@@ -168,9 +186,13 @@ T.ToolTip {
         repeat: false
         onTriggered: {
             if (root.isKeyboardMode) {
-                root.close();
+                root.hideImmediately();
             }
         }
+    }
+
+    Component.onDestruction: {
+        root.hideImmediately();
     }
 
     enter: Transition {
@@ -193,7 +215,7 @@ T.ToolTip {
         }
     }
 
-    contentItem: Controls.Label {
+    contentItem: QQC2.Label {
         id: label
         enabled: false
         text: root.text

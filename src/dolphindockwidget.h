@@ -27,6 +27,13 @@ public:
     void setLocked(bool lock);
     bool isLocked() const;
 
+Q_SIGNALS:
+    /**
+     * @brief Emitted whenever the panel lock state is toggled.
+     * @param locked True if panels are locked, false if unlocked.
+     */
+    void lockedChanged(bool locked);
+
 protected:
     /**
      * Make sure we do not emit QDockWidget::visibilityChanged() signals whenever Dolphin's window is minimized or restored.

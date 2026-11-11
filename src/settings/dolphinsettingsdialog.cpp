@@ -11,8 +11,11 @@
 #include "dolphin_generalsettings.h"
 #include "dolphinmainwindow.h"
 #include "interface/interfacesettingspage.h"
+#include "panels/zenpanel/backend/ZenPanelBridge.h"
+#include "panels/zenpanel/zendockpanel.h"
 #include "trash/trashsettingspage.h"
 #include "viewmodes/viewsettingspage.h"
+#include "zensettingspage.h"
 #if HAVE_KUSERFEEDBACK
 #include "userfeedback/dolphinfeedbackprovider.h"
 #include "userfeedback/userfeedbacksettingspage.h"
@@ -44,7 +47,7 @@ DolphinSettingsDialog::DolphinSettingsDialog(const QUrl &url, QWidget *parent, K
     // Interface
     InterfaceSettingsPage *interfaceSettingsPage = new InterfaceSettingsPage(this);
     KPageWidgetItem *interfaceSettingsFrame = addPage(interfaceSettingsPage, i18nc("@title:group Interface settings", "Interface"));
-    interfaceSettingsFrame->setIcon(QIcon::fromTheme(QStringLiteral("org.kde.dolphin")));
+    interfaceSettingsFrame->setIcon(QIcon::fromTheme(QStringLiteral("preferences-desktop-theme")));
     connect(interfaceSettingsPage, &InterfaceSettingsPage::changed, this, &DolphinSettingsDialog::enableApply);
 
     // View
@@ -71,6 +74,28 @@ DolphinSettingsDialog::DolphinSettingsDialog(const QUrl &url, QWidget *parent, K
     contextMenuSettingsFrame->setIcon(QIcon::fromTheme(QStringLiteral("preferences-desktop-menu-edit")));
     connect(contextMenuSettingsPage, &ContextMenuSettingsPage::changed, this, &DolphinSettingsDialog::enableApply);
 
+    // Zen Panel
+    ZenPanelBridge *zenBridge = nullptr;
+    if (auto *mainWindow = qobject_cast<DolphinMainWindow *>(parent)) {
+        if (mainWindow->zenPanel()) {
+            zenBridge = mainWindow->zenPanel()->bridge();
+        }
+    } else if (parent && parent->window()) {
+        if (auto *mainWindow = qobject_cast<DolphinMainWindow *>(parent->window())) {
+            if (mainWindow->zenPanel()) {
+                zenBridge = mainWindow->zenPanel()->bridge();
+            }
+        }
+    }
+    if (!zenBridge) {
+        zenBridge = new ZenPanelBridge(this);
+    }
+
+    ZenSettingsPage *zenSettingsPage = new ZenSettingsPage(zenBridge, this);
+    zenSettings = addPage(zenSettingsPage, i18nc("@title:group", "ZenPanel"));
+    zenSettings->setIcon(QIcon::fromTheme(QStringLiteral("org.kde.dolphin-zen"), QIcon(QStringLiteral(":/icons/org.kde.dolphin-zen.svg"))));
+    connect(zenSettingsPage, &ZenSettingsPage::changed, this, &DolphinSettingsDialog::enableApply);
+
     // Trash
     SettingsPageBase *trashSettingsPage = nullptr;
 #ifndef Q_OS_WIN
@@ -96,6 +121,7 @@ DolphinSettingsDialog::DolphinSettingsDialog(const QUrl &url, QWidget *parent, K
     m_pages.append(interfaceSettingsPage);
     m_pages.append(viewSettingsPage);
     m_pages.append(contextMenuSettingsPage);
+    m_pages.append(zenSettingsPage);
     if (trashSettingsPage) {
         m_pages.append(trashSettingsPage);
     }

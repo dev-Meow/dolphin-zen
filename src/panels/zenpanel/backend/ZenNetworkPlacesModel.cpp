@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include "ZenNetworkPlacesModel.h"
 #include "ZenPlacesMasterModel.h"
 
@@ -150,7 +156,7 @@ bool ZenNetworkPlacesModel::setData(const QModelIndex &index, const QVariant &va
     return false;
 }
 
-void ZenNetworkPlacesModel::onItemsAdded(const QUrl &/*directoryUrl*/, const KFileItemList &items)
+void ZenNetworkPlacesModel::onItemsAdded(const QUrl & /*directoryUrl*/, const KFileItemList &items)
 {
     if (!m_enabled || items.isEmpty()) {
         return;
@@ -205,4 +211,3 @@ void ZenNetworkPlacesModel::onListerCleared()
         endResetModel();
     }
 }
-

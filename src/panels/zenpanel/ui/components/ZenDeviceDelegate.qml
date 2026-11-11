@@ -1,14 +1,17 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.ki18n
 import org.kde.dolphin.zenpanel
 
 /**
- * Specialized list item delegate for hardware drives, removable media, and network shares (Section 3.3).
+ * Specialized list item delegate for hardware drives, removable media, and network shares.
  *
  * Provides a compact Dolphin-style capacity bar underneath the label and a subtle per-device
  * hover pin overlay button (similar to Zen Browser's tab close button).
@@ -47,7 +50,7 @@ Item {
     signal urlsDropped(var urls, point globalPos)
 
     implicitWidth: Kirigami.Units.gridUnit * 10
-    implicitHeight: root.bridge ? (root.capacityPercentage >= 0 ? root.bridge.devicesRowHeight + Math.round(Kirigami.Units.smallSpacing * 0.8) : root.bridge.devicesRowHeight) : (root.capacityPercentage >= 0 ? Math.round(Kirigami.Units.gridUnit * 2.2) : Math.round(Kirigami.Units.gridUnit * 2.0))
+    implicitHeight: (root.bridge ? root.bridge.devicesRowHeight : Math.round(Kirigami.Units.gridUnit * 1.35)) + (root.capacityPercentage >= 0 ? 5 : 0)
     opacity: root.isHidden ? 0.6 : 1.0
 
     // Full accessibility support following KDE HIG
@@ -72,9 +75,12 @@ Item {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.25);
             }
             if (mouseArea.containsPress) {
-                return Kirigami.Theme.focusColor;
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.35);
             }
-            if (hoverHandler.hovered && (!root.bridge || (!root.bridge.keyboardNavigationActive && !root.bridge.touchInteractionActive))) {
+            if (root.isItemFocused) {
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.12);
+            }
+            if (hoverHandler.hovered) {
                 return Kirigami.Theme.hoverColor;
             }
             if (root.isCurrentLocation) {
@@ -86,7 +92,7 @@ Item {
             return "transparent";
         }
 
-        border.color: ((root.isItemFocused && (!root.bridge || root.bridge.keyboardNavigationActive)) || dropArea.containsDrag) ? Kirigami.Theme.focusColor : "transparent"
+        border.color: (root.isItemFocused || dropArea.containsDrag) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
         border.width: 1
 
         Behavior on color {
@@ -151,24 +157,20 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin: root.bridge ? (root.bridge.lateralMargin + 1) : (Kirigami.Units.smallSpacing + 1)
-        anchors.rightMargin: root.bridge ? (root.bridge.lateralMargin + 1) : (Kirigami.Units.smallSpacing + 1)
+        anchors.leftMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
+        anchors.rightMargin: (root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing) + 1
         spacing: root.bridge ? root.bridge.lateralMargin : Kirigami.Units.smallSpacing
 
         // Device or network icon
-        Kirigami.Icon {
+        ZenSectionIcon {
             Layout.preferredWidth: root.bridge ? root.bridge.devicesIconSize : Kirigami.Units.iconSizes.smallMedium
             Layout.preferredHeight: Layout.preferredWidth
             Layout.alignment: Qt.AlignVCenter
-            source: {
-                if (!root.bridge) {
-                    return root.decoration ? root.decoration : "drive-harddisk";
-                }
-                const _rev = root.bridge.themeMetricsRevision;
-                return root.bridge.resolveSectionIcon(root.decoration ? root.decoration : "drive-harddisk", "devices");
-            }
-            isMask: root.bridge ? root.bridge.isSectionIconMask(root.decoration, "devices") : false
-            color: (root.isCurrentLocation || root.isItemFocused) ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+            bridge: root.bridge
+            section: "devices"
+            iconName: root.decoration
+            fallbackIcon: "drive-harddisk"
+            highlighted: root.isCurrentLocation || root.isItemFocused
         }
 
             // Device title and optional compact Dolphin-style capacity bar
@@ -177,7 +179,7 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 2
 
-                Controls.Label {
+                QQC2.Label {
                     Layout.fillWidth: true
                     text: root.display
                     elide: Text.ElideRight
@@ -186,25 +188,16 @@ Item {
                     font.weight: root.isCurrentLocation ? Font.DemiBold : Font.Normal
                 }
 
-                // Zero out qqc2-desktop-style's default largeSpacing vertical insets so the bar renders at compact height
-                // Switch to Kirigami.Theme.negativeTextColor above 95% usage (matching KFilePlacesViewDelegate)
-                Controls.ProgressBar {
+                ZenCapacityBar {
                     id: capacityBar
                     visible: root.capacityPercentage >= 0
                     Layout.fillWidth: true
-                    topInset: 0
-                    bottomInset: 0
-                    from: 0
-                    to: 100
                     value: Math.max(0, root.capacityPercentage)
-                    Kirigami.Theme.inherit: false
-                    Kirigami.Theme.colorSet: Kirigami.Theme.View
-                    Kirigami.Theme.highlightColor: root.capacityPercentage > 95 ? Kirigami.Theme.negativeTextColor : root.Kirigami.Theme.highlightColor
                 }
             }
 
             // Per-device pin overlay button (shown only on row hover, subtler than the section header pin)
-            Controls.ToolButton {
+            QQC2.ToolButton {
                 id: pinButton
                 visible: hoverHandler.hovered
                 focusPolicy: Qt.NoFocus
@@ -236,7 +229,7 @@ Item {
         keyboardFocused: root.isItemFocused
         text: {
             if (pinButton.hovered) {
-                return root.isPinnedDevice ? KI18n.i18nc("@info:tooltip", "Do not keep device permanently shown") : KI18n.i18nc("@info:tooltip", "Show device permanently even when collapsed");
+                return root.isPinnedDevice ? KI18n.i18nc("@info:tooltip", "Release from permanently shown devices") : KI18n.i18nc("@info:tooltip", "Show device permanently even when collapsed");
             }
             if (root.formattedPath.length > 0 && root.freeSpaceText.length > 0) {
                 return root.formattedPath + "\n" + root.freeSpaceText;

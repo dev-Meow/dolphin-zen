@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
@@ -37,7 +40,7 @@ Item {
     implicitHeight: gridContainer.implicitHeight + Kirigami.Units.smallSpacing * 2
 
     focus: true
-    activeFocusOnTab: true
+    activeFocusOnTab: root.visible && (gridContainer.totalCount > 0)
 
     onActiveFocusChanged: {
         if (activeFocus && !root.hasActiveTileFocus()) {
@@ -323,7 +326,7 @@ Item {
         color: Kirigami.Theme.highlightColor
         opacity: 0.92
 
-        border.color: Kirigami.Theme.focusColor
+        border.color: Qt.alpha(Kirigami.Theme.focusColor, 0.65)
         border.width: 1
 
         Kirigami.Icon {

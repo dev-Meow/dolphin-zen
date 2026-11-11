@@ -1,15 +1,18 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as Controls
+import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.ki18n
 import org.kde.dolphin.zenpanel
 import "../components"
 
 /**
- * Collapsible Devices & Network section (Section 3.3).
+ * Collapsible Devices and Network storage section.
  *
  * Behavior:
  * - Unpinned & idle: collapses in-layout to show only the section header and individually pinned devices.
@@ -41,8 +44,13 @@ Item {
     // Whether all devices (including unpinned ones) should currently be visible
     readonly property bool showAllDevices: root.effectivePinned || root.isHoverExpanded || devicesListView.activeFocus
 
-    // Current bounded height of the ListView content (capped at 12 gridUnits before scrolling)
-    readonly property real currentBoundedListHeight: devicesListView.count > 0 ? Math.min(devicesListView.contentHeight, Kirigami.Units.gridUnit * 12) : 0
+    // Configured maximum list height based on user section size preferences
+    readonly property real configuredMaxListHeight: root.bridge
+        ? Math.max(root.bridge.devicesSectionHeight - header.implicitHeight - Kirigami.Units.smallSpacing, Kirigami.Units.gridUnit * 2)
+        : Kirigami.Units.gridUnit * 12
+
+    // Current bounded height of the ListView content
+    readonly property real currentBoundedListHeight: devicesListView.count > 0 ? Math.min(devicesListView.contentHeight, root.configuredMaxListHeight) : 0
 
     // Target visual height of the section surface (header + currently visible list)
     readonly property real targetSurfaceHeight: header.implicitHeight + (root.currentBoundedListHeight > 0 ? Kirigami.Units.smallSpacing + root.currentBoundedListHeight : 0)
@@ -56,9 +64,7 @@ Item {
 
     function focusFirstDevice() {
         if (devicesListView.count > 0) {
-            if (devicesListView.currentIndex < 0) {
-                devicesListView.currentIndex = 0;
-            }
+            devicesListView.currentIndex = 0;
             devicesListView.forceActiveFocus();
         }
     }
@@ -118,8 +124,8 @@ Item {
 
         Behavior on height {
             NumberAnimation {
-                duration: Kirigami.Units.shortDuration
-                easing.type: Easing.InOutQuad
+                duration: 200
+                easing.type: Easing.OutCubic
             }
         }
 
@@ -153,13 +159,14 @@ Item {
             // Section header with section-wide Pin toggle button
             ZenSectionHeader {
                 id: header
+                bridge: root.bridge
                 Layout.fillWidth: true
                 text: KI18n.i18nc("@title:group", "Devices & Network")
                 actionIconName: "pin"
                 actionCheckable: true
                 actionChecked: root.effectivePinned
                 actionEnabled: !root.isHorizontal
-                actionToolTipText: root.effectivePinned ? KI18n.i18nc("@info:tooltip", "Automatically collapse device list") : KI18n.i18nc("@info:tooltip", "Keep device list permanently pinned in panel")
+                actionToolTipText: root.effectivePinned ? KI18n.i18nc("@info:tooltip", "Unpin section: panel collapses automatically") : KI18n.i18nc("@info:tooltip", "Pin section: panel stays expanded.")
 
                 onActionToggled: function (checked) {
                     if (!checked) {
@@ -186,7 +193,7 @@ Item {
                     activeFocusOnTab: count > 0
                     keyNavigationEnabled: true
 
-                    Controls.ScrollBar.vertical: ZenScrollBar {
+                    QQC2.ScrollBar.vertical: ZenScrollBar {
                         id: deviceScrollBar
                         parent: devicesListView
                         x: devicesListView.width - width
@@ -194,6 +201,13 @@ Item {
                         height: devicesListView.height
                         sectionHovered: hoverHandler.hovered
                         sectionFocused: devicesListView.activeFocus
+                    }
+
+                    ZenWheelScroller {
+                        flickable: devicesListView
+                        bridge: root.bridge
+                        rowHeight: root.bridge ? root.bridge.devicesRowHeight : 24
+                        onScrolled: deviceScrollBar.revealTemporarily()
                     }
 
                     onActiveFocusChanged: {
@@ -206,7 +220,7 @@ Item {
                     }
 
                     onMovementStarted: {
-                        if (root.bridge) {
+                        if (root.bridge && (devicesListView.dragging || devicesListView.flicking)) {
                             root.bridge.notifyTouchInteraction("devices");
                         }
                     }
@@ -272,11 +286,24 @@ Item {
             onHoveredChanged: {
                 if (hovered) {
                     collapseTimer.stop();
-                    root.isHoverExpanded = true;
-                    deviceScrollBar.revealTemporarily();
+                    expandTimer.restart();
                 } else {
+                    expandTimer.stop();
                     collapseTimer.restart();
                 }
+            }
+        }
+    }
+
+    // Debounce timer (180ms) so quick pointer transit does not immediately pop open the overlay
+    Timer {
+        id: expandTimer
+        interval: 180
+        repeat: false
+        onTriggered: {
+            if (hoverHandler.hovered) {
+                root.isHoverExpanded = true;
+                deviceScrollBar.revealTemporarily();
             }
         }
     }
@@ -284,14 +311,23 @@ Item {
     // Delayed auto-collapse after the pointer leaves the section surface
     Timer {
         id: collapseTimer
-        interval: 350
+        interval: 220
         repeat: false
         onTriggered: {
-            if (!hoverHandler.hovered) {
+            if (!hoverHandler.hovered && !(root.bridge && root.bridge.contextMenuActive)) {
                 if (devicesListView.activeFocus) {
                     devicesListView.focus = false;
                 }
                 root.isHoverExpanded = false;
+            }
+        }
+    }
+
+    Connections {
+        target: root.bridge
+        function onContextMenuActiveChanged() {
+            if (root.bridge && !root.bridge.contextMenuActive && !hoverHandler.hovered) {
+                collapseTimer.restart();
             }
         }
     }

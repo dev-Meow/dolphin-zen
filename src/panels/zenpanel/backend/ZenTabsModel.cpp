@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include "ZenTabsModel.h"
 
 #include <KShell>
@@ -6,7 +12,7 @@
 Q_DECLARE_LOGGING_CATEGORY(zenLog)
 
 ZenTabsModel::ZenTabsModel(QObject *parent)
-: QAbstractListModel(parent)
+    : QAbstractListModel(parent)
 {
 }
 
@@ -20,18 +26,16 @@ int ZenTabsModel::rowCount(const QModelIndex &parent) const
 
 QHash<int, QByteArray> ZenTabsModel::roleNames() const
 {
-    return {
-        {TabIndexRole, "tabIndex"},
-        {TitleRole, "title"},
-        {PrimaryUrlRole, "primaryUrl"},
-        {SecondaryUrlRole, "secondaryUrl"},
-        {IconNameRole, "iconName"},
-        {IsSplitActiveRole, "isSplitActive"},
-        {IsSecondaryFocusedRole, "isSecondaryFocused"},
-        {IsCurrentTabRole, "isCurrentTab"},
-        {FormattedPrimaryPathRole, "formattedPrimaryPath"},
-        {FormattedSecondaryPathRole, "formattedSecondaryPath"}
-    };
+    return {{TabIndexRole, "tabIndex"},
+            {TitleRole, "title"},
+            {PrimaryUrlRole, "primaryUrl"},
+            {SecondaryUrlRole, "secondaryUrl"},
+            {IconNameRole, "iconName"},
+            {IsSplitActiveRole, "isSplitActive"},
+            {IsSecondaryFocusedRole, "isSecondaryFocused"},
+            {IsCurrentTabRole, "isCurrentTab"},
+            {FormattedPrimaryPathRole, "formattedPrimaryPath"},
+            {FormattedSecondaryPathRole, "formattedSecondaryPath"}};
 }
 
 QString ZenTabsModel::formatPath(const QUrl &url) const
@@ -54,29 +58,29 @@ QVariant ZenTabsModel::data(const QModelIndex &index, int role) const
     const ZenTabInfo &tab = m_tabs.at(index.row());
 
     switch (role) {
-        case Qt::DisplayRole:
-        case TitleRole:
-            return tab.title;
-        case TabIndexRole:
-            return tab.index;
-        case PrimaryUrlRole:
-            return tab.primaryUrl;
-        case SecondaryUrlRole:
-            return tab.secondaryUrl;
-        case IconNameRole:
-            return tab.iconName;
-        case IsSplitActiveRole:
-            return tab.isSplitActive;
-        case IsSecondaryFocusedRole:
-            return tab.isSecondaryFocused;
-        case IsCurrentTabRole:
-            return tab.isCurrentTab;
-        case FormattedPrimaryPathRole:
-            return formatPath(tab.primaryUrl);
-        case FormattedSecondaryPathRole:
-            return formatPath(tab.secondaryUrl);
-        default:
-            return QVariant();
+    case Qt::DisplayRole:
+    case TitleRole:
+        return tab.title;
+    case TabIndexRole:
+        return tab.index;
+    case PrimaryUrlRole:
+        return tab.primaryUrl;
+    case SecondaryUrlRole:
+        return tab.secondaryUrl;
+    case IconNameRole:
+        return tab.iconName;
+    case IsSplitActiveRole:
+        return tab.isSplitActive;
+    case IsSecondaryFocusedRole:
+        return tab.isSecondaryFocused;
+    case IsCurrentTabRole:
+        return tab.isCurrentTab;
+    case FormattedPrimaryPathRole:
+        return formatPath(tab.primaryUrl);
+    case FormattedSecondaryPathRole:
+        return formatPath(tab.secondaryUrl);
+    default:
+        return QVariant();
     }
 }
 
@@ -283,13 +287,13 @@ void ZenTabsModel::closeTab(int index)
 
     beginRemoveRows(QModelIndex(), index, index);
     m_tabs.removeAt(index);
-    // Indizes neu durchnummerieren
+    // Re-index remaining tabs
     for (int i = 0; i < m_tabs.size(); ++i) {
         m_tabs[i].index = i;
     }
     endRemoveRows();
 
-    // Falls der geschlossene Tab aktiv war, letzten aktivieren
+    // If the closed tab was active, activate the last remaining tab
     if (!m_tabs.isEmpty() && activeTabIndex() == -1) {
         m_tabs.last().isCurrentTab = true;
         Q_EMIT dataChanged(this->index(m_tabs.size() - 1, 0), this->index(m_tabs.size() - 1, 0), {IsCurrentTabRole});
@@ -326,7 +330,7 @@ void ZenTabsModel::simulateAddTab(const QString &title, const QUrl &primaryUrl, 
     tab.secondaryUrl = secondaryUrl;
     tab.isSplitActive = !secondaryUrl.isEmpty();
     tab.isSecondaryFocused = false;
-    tab.isCurrentTab = m_tabs.isEmpty(); // erster Tab ist standardmäßig aktiv
+    tab.isCurrentTab = m_tabs.isEmpty(); // First tab is active by default
 
     m_tabs.append(tab);
     endInsertRows();

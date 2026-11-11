@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2026 Meow <meow@zenpanel.local>
+# SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 include(ECMQmlModule)
@@ -68,9 +68,14 @@ ecm_add_qml_module(zenpanel_panel
         ui/components/ZenTileDelegate.qml
         ui/components/ZenSectionHeader.qml
         ui/components/ZenPlaceListDelegate.qml
+        ui/components/ZenWorkspaceTreeDelegate.qml
         ui/components/ZenDeviceDelegate.qml
         ui/components/ZenScrollBar.qml
         ui/components/ZenToolTip.qml
+        ui/components/ZenCapacityBar.qml
+        ui/components/ZenSectionIcon.qml
+        ui/components/ZenSectionSplitter.qml
+        ui/components/ZenWheelScroller.qml
         ui/components/ZenSettingsDialog.qml
         ui/sections/EssentialsSection.qml
         ui/sections/TrashSection.qml

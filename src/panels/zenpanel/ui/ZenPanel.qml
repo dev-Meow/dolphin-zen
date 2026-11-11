@@ -1,9 +1,13 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
+import "components"
 import "sections"
 import "sections/workspace"
 
@@ -38,13 +42,28 @@ Rectangle {
 
     focus: true
 
-    onActiveFocusChanged: {
-        if (activeFocus && !root.hasActiveChildFocus(root)) {
+    function focusInitialItem() {
+        if (root.bridge) {
+            root.bridge.notifyKeyboardInteraction();
+        }
+        if (essentialsSection.visible && root.essentialsModel && root.essentialsModel.rowCount() > 0) {
+            essentialsSection.focusTileAt(0);
+        } else {
             workspaceSection.focusFirstItem();
         }
     }
 
+    onActiveFocusChanged: {
+        if (activeFocus && !root.hasActiveChildFocus(root)) {
+            root.focusInitialItem();
+        }
+    }
+
     Keys.onPressed: function(event) {
+        if (root.bridge) {
+            root.bridge.notifyKeyboardInteraction();
+        }
+
         if (event.key === Qt.Key_Backtab) {
             if (essentialsSection.hasActiveTileFocus() || essentialsSection.activeFocus
                 || (!essentialsSection.visible && workspaceSection.activeFocus)) {
@@ -87,7 +106,7 @@ Rectangle {
     }
 
     // =========================================================================
-    // Haupt-Orchestrator Layout: Dynamisch Vertikal (1 Spalte) / Horizontal (1 Zeile)
+    // Main orchestrator layout: dynamically Vertical (1 column) / Horizontal (1 row)
     // =========================================================================
     GridLayout {
         id: mainLayout
@@ -114,7 +133,7 @@ Rectangle {
             }
         }
 
-        // 1. Oben/Links: Essentials-Kachel-Grid (3.1)
+        // 1. Top/Left: Essentials tile grid (3.1)
         EssentialsSection {
             id: essentialsSection
             bridge: root.bridge
@@ -122,7 +141,8 @@ Rectangle {
             showAddButton: root.bridge ? root.bridge.showAddEssentialButton : true
             Layout.fillWidth: root.isVertical
             Layout.fillHeight: !root.isVertical
-            Layout.preferredWidth: root.isVertical ? -1 : Kirigami.Units.gridUnit * 12
+            Layout.preferredWidth: root.isVertical ? -1 : (root.bridge ? root.bridge.horizontalEssentialsWidth : Kirigami.Units.gridUnit * 12)
+            Layout.minimumWidth: root.isVertical ? -1 : (root.bridge ? (root.bridge.essentialsTileWidth + Kirigami.Units.smallSpacing * 2) : 56)
             essentialsModel: root.essentialsModel
             tabsModel: root.tabsModel
             highlightOpenTabPlaces: root.bridge ? root.bridge.highlightOpenTabPlaces : true
@@ -149,15 +169,29 @@ Rectangle {
             }
         }
 
-        // Subtle section separator (adapts automatically to vertical/horizontal panel orientation)
-        Kirigami.Separator {
-            Layout.fillWidth: root.isVertical
-            Layout.fillHeight: !root.isVertical
-            Layout.leftMargin: root.isVertical ? Kirigami.Units.smallSpacing : 0
-            Layout.rightMargin: root.isVertical ? Kirigami.Units.smallSpacing : 0
-            Layout.topMargin: root.isVertical ? 0 : Kirigami.Units.smallSpacing
-            Layout.bottomMargin: root.isVertical ? 0 : Kirigami.Units.smallSpacing
-            weight: Kirigami.Separator.Weight.Light
+        // Section separator & interactive splitter between Essentials and Workspace
+        ZenSectionSplitter {
+            id: essentialsSplitter
+            isVertical: root.isVertical
+            canResizeHorizontal: root.bridge && !root.bridge.panelsLocked && !root.isVertical
+
+            property int startWidth: 0
+
+            onResizeStarted: {
+                startWidth = root.bridge ? root.bridge.horizontalEssentialsWidth : Kirigami.Units.gridUnit * 12;
+            }
+            onResizeMoved: function (delta) {
+                if (root.bridge) {
+                    const minW = Math.max((root.bridge.essentialsTileWidth + Kirigami.Units.smallSpacing * 2), 56);
+                    const maxW = Math.min(Math.round(root.width * 0.45), Kirigami.Units.gridUnit * 24);
+                    root.bridge.horizontalEssentialsWidth = Math.max(minW, Math.min(maxW, startWidth + delta));
+                }
+            }
+            onResizeFinished: {
+                if (root.bridge) {
+                    root.bridge.saveSectionSizes();
+                }
+            }
         }
 
         // 2. Center: Flexible workspace section (3.2) - fills remaining space
@@ -166,6 +200,7 @@ Rectangle {
             bridge: root.bridge
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.minimumWidth: root.isVertical ? -1 : Kirigami.Units.gridUnit * 10
             placesModel: root.workspacePlacesModel
             tabsModel: root.tabsModel
             treeModel: root.treeModel
@@ -194,15 +229,43 @@ Rectangle {
             }
         }
 
-        // Subtle section separator (adapts automatically to vertical/horizontal panel orientation)
-        Kirigami.Separator {
-            Layout.fillWidth: root.isVertical
-            Layout.fillHeight: !root.isVertical
-            Layout.leftMargin: root.isVertical ? Kirigami.Units.smallSpacing : 0
-            Layout.rightMargin: root.isVertical ? Kirigami.Units.smallSpacing : 0
-            Layout.topMargin: root.isVertical ? 0 : Kirigami.Units.smallSpacing
-            Layout.bottomMargin: root.isVertical ? 0 : Kirigami.Units.smallSpacing
-            weight: Kirigami.Separator.Weight.Light
+        // Section separator & interactive splitter between Workspace and Devices
+        ZenSectionSplitter {
+            id: devicesSplitter
+            isVertical: root.isVertical
+            canResizeVertical: root.bridge && !root.bridge.panelsLocked && root.isVertical && devicesSection.effectivePinned
+            canResizeHorizontal: root.bridge && !root.bridge.panelsLocked && !root.isVertical
+
+            property int startDimension: 0
+
+            onResizeStarted: function (vertical) {
+                if (vertical) {
+                    startDimension = root.bridge ? root.bridge.devicesSectionHeight : Kirigami.Units.gridUnit * 10;
+                } else {
+                    startDimension = root.bridge ? root.bridge.horizontalDevicesWidth : Kirigami.Units.gridUnit * 12;
+                }
+            }
+            onResizeMoved: function (delta, vertical) {
+                if (!root.bridge) {
+                    return;
+                }
+                if (vertical) {
+                    // Dragging upwards (negative delta) increases devices height
+                    const minH = Math.round(Kirigami.Units.gridUnit * 3.5);
+                    const maxH = Math.min(Math.round(root.height * 0.5), Kirigami.Units.gridUnit * 22);
+                    root.bridge.devicesSectionHeight = Math.max(minH, Math.min(maxH, startDimension - delta));
+                } else {
+                    // Dragging leftwards (negative delta) increases devices width
+                    const minW = Math.round(Kirigami.Units.gridUnit * 10);
+                    const maxW = Math.min(Math.round(root.width * 0.45), Kirigami.Units.gridUnit * 24);
+                    root.bridge.horizontalDevicesWidth = Math.max(minW, Math.min(maxW, startDimension - delta));
+                }
+            }
+            onResizeFinished: {
+                if (root.bridge) {
+                    root.bridge.saveSectionSizes();
+                }
+            }
         }
 
         // 3. Bottom/Right: Devices & Network section (3.3) - z: 10 so its unpinned hover overlay floats above WorkspaceSection
@@ -212,7 +275,11 @@ Rectangle {
             bridge: root.bridge
             Layout.fillWidth: root.isVertical
             Layout.fillHeight: !root.isVertical
-            Layout.preferredWidth: root.isVertical ? -1 : Kirigami.Units.gridUnit * 12
+            Layout.preferredHeight: root.isVertical
+                ? (devicesSection.effectivePinned ? Math.min(devicesSection.targetSurfaceHeight, root.bridge ? root.bridge.devicesSectionHeight : Kirigami.Units.gridUnit * 10) : devicesSection.inLayoutHeight)
+                : -1
+            Layout.preferredWidth: root.isVertical ? -1 : (root.bridge ? root.bridge.horizontalDevicesWidth : Kirigami.Units.gridUnit * 12)
+            Layout.minimumWidth: root.isVertical ? -1 : Kirigami.Units.gridUnit * 10
             devicesModel: root.devicesModel
             tabsModel: root.tabsModel
             isPinned: root.bridge.devicesPinned
@@ -251,15 +318,17 @@ Rectangle {
             weight: Kirigami.Separator.Weight.Light
         }
 
-        // 4. Fixierter Papierkorb ganz unten/rechts außen (3.4)
+        // 4. Dedicated trash section pinned to bottom or outer edge
         TrashSection {
             id: trashSection
             bridge: root.bridge
             isHorizontal: !root.isVertical
             visible: root.bridge ? root.bridge.showTrashSection : true
+            Layout.alignment: Qt.AlignTop
             Layout.fillWidth: root.isVertical
-            Layout.fillHeight: !root.isVertical
-            Layout.preferredWidth: root.isVertical ? -1 : (root.bridge ? root.bridge.essentialsTileWidth : Math.round(Kirigami.Units.gridUnit * 2.5))
+            Layout.fillHeight: false
+            Layout.preferredWidth: root.isVertical ? -1 : trashSection.implicitWidth
+            Layout.preferredHeight: trashSection.implicitHeight
             trashModel: root.trashModel
             tabsModel: root.tabsModel
             highlightOpenTabPlaces: root.bridge.highlightOpenTabPlaces

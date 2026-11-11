@@ -27,6 +27,7 @@ public:
     ~DolphinSettingsDialog() override;
 
     KPageWidgetItem *trashSettings;
+    KPageWidgetItem *zenSettings = nullptr;
 
 Q_SIGNALS:
     void settingsChanged();

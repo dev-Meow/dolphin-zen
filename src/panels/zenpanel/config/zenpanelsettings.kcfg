@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+  SPDX-License-Identifier: GPL-2.0-or-later
+-->
 <kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
@@ -37,6 +41,10 @@
             <label>Switch to already open tab/split view when clicking a place instead of reopening</label>
             <default>true</default>
         </entry>
+        <entry name="HideEssentialsInWorkspace" type="Bool">
+            <label>Hide entries in "Places" that are already present in Quick Access</label>
+            <default>true</default>
+        </entry>
         <entry name="DefaultWorkspaceView" type="Enum">
             <label>Default view mode for the workspace section</label>
             <choices>
@@ -71,10 +79,6 @@
             <min>0</min>
             <max>2</max>
         </entry>
-        <entry name="PreferOutlineIcons" type="Bool">
-            <label>Prefer schematic outline icons even at larger icon sizes</label>
-            <default>false</default>
-        </entry>
         <entry name="CustomEssentialsIconSize" type="Int">
             <label>Custom icon size for Essentials quick-access (0 to follow global setting)</label>
             <default>0</default>
@@ -95,6 +99,12 @@
         </entry>
         <entry name="CustomTreeIconSize" type="Int">
             <label>Custom icon size for Folder Tree (0 to follow global setting)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>64</max>
+        </entry>
+        <entry name="CustomTrashIconSize" type="Int">
+            <label>Custom icon size for Trash section (0 to follow global setting)</label>
             <default>0</default>
             <min>0</min>
             <max>64</max>
@@ -122,6 +132,43 @@
             <default>0</default>
             <min>0</min>
             <max>3</max>
+        </entry>
+        <entry name="CustomTrashIconStyle" type="Int">
+            <label>Custom icon style for Trash (0 = follow global, 1 = theme default, 2 = color, 3 = monochrome)</label>
+            <default>0</default>
+            <min>0</min>
+            <max>3</max>
+        </entry>
+        <entry name="DevicesSectionHeight" type="Int">
+            <label>Height of the devices section when pinned in vertical mode</label>
+            <default>180</default>
+            <min>64</min>
+            <max>600</max>
+        </entry>
+        <entry name="HorizontalEssentialsWidth" type="Int">
+            <label>Width of the essentials section when docked horizontally</label>
+            <default>216</default>
+            <min>56</min>
+            <max>600</max>
+        </entry>
+        <entry name="HorizontalDevicesWidth" type="Int">
+            <label>Width of the devices section when docked horizontally</label>
+            <default>220</default>
+            <min>180</min>
+            <max>600</max>
+        </entry>
+
+        <!--
+            Mouse wheel and touchpad smooth scrolling speed modifier:
+            1.0 = Follow live system defaults (QApplication::wheelScrollLines() / native libinput).
+            1.4 = Classic snappy Dolphin QtWidgets feeling.
+            Power users can tune this directly in zenpanelrc without bloating the settings dialog.
+        -->
+        <entry name="WheelScrollSpeedModifier" type="Double">
+            <label>Scroll speed multiplier for mouse wheel and touchpad (1.0 = system standard, 1.4 = classic Dolphin feeling)</label>
+            <default>1.0</default>
+            <min>0.1</min>
+            <max>10.0</max>
         </entry>
     </group>
 

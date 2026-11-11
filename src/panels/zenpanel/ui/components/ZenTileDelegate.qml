@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
@@ -49,8 +52,8 @@ Item {
     signal dragFinished(int fromIndex)
     signal dragCanceled()
 
-    implicitWidth: root.bridge ? root.bridge.essentialsTileWidth : Math.round(Kirigami.Units.gridUnit * 3.0)
-    implicitHeight: root.bridge ? root.bridge.essentialsTileHeight : Math.round(Kirigami.Units.gridUnit * 2.5)
+    implicitWidth: root.bridge ? root.bridge.essentialsTileWidth : Math.round(Kirigami.Units.gridUnit * 3.1)
+    implicitHeight: root.bridge ? root.bridge.essentialsTileHeight : Math.round(Kirigami.Units.gridUnit * 2.4)
     opacity: root.isDragging ? 0.35 : (root.isHidden ? 0.6 : 1.0)
     scale: root.isHeld ? 1.04 : 1.0
     z: root.isDragging ? 100 : 0
@@ -66,11 +69,12 @@ Item {
 
     // Full accessibility support following KDE HIG
     Accessible.role: Accessible.Button
-    Accessible.name: root.isAddButton ? KI18n.i18nc("@action:button", "Add new quick access item") : root.display
+    Accessible.name: root.isAddButton ? KI18n.i18nc("@action:button", "Add new essential item") : root.display
     Accessible.description: root.formattedPath
 
     onIsItemFocusedChanged: {
         if (root.isItemFocused && root.bridge) {
+            root.bridge.notifyKeyboardInteraction();
             root.bridge.focusedItemDescription = root.isAddButton ? "[+] Add Quick Access" : root.display;
         }
     }
@@ -97,9 +101,12 @@ Item {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.25);
             }
             if (mouseArea.containsPress) {
-                return Kirigami.Theme.focusColor;
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.35);
             }
-            if (hoverHandler.hovered && (!root.bridge || (!root.bridge.keyboardNavigationActive && !root.bridge.touchInteractionActive))) {
+            if (root.isItemFocused) {
+                return Qt.alpha(Kirigami.Theme.focusColor, 0.12);
+            }
+            if (hoverHandler.hovered) {
                 return Kirigami.Theme.hoverColor;
             }
             if (root.isCurrentLocation) {
@@ -111,7 +118,7 @@ Item {
             return Kirigami.Theme.alternateBackgroundColor;
         }
 
-        border.color: ((root.isItemFocused && (!root.bridge || root.bridge.keyboardNavigationActive)) || root.isHeld || root.isDropTarget || dropArea.containsDrag) ? Kirigami.Theme.focusColor : "transparent"
+        border.color: (root.isItemFocused || root.isHeld || root.isDropTarget || dropArea.containsDrag) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
         border.width: root.isDropTarget ? 2 : 1
 
         Behavior on color {
@@ -135,21 +142,18 @@ Item {
         }
 
         // Essential Icon
-        Kirigami.Icon {
+        ZenSectionIcon {
             id: tileIcon
             anchors.centerIn: parent
             width: root.bridge ? root.bridge.essentialsIconSize : Kirigami.Units.iconSizes.medium
             height: width
-            source: {
-                if (!root.bridge) {
-                    return root.isAddButton ? "list-add" : root.decoration;
-                }
-                const _rev = root.bridge.themeMetricsRevision;
-                return root.bridge.resolveSectionIcon(root.isAddButton ? "list-add" : root.decoration, "essentials");
-            }
+            bridge: root.bridge
+            section: "essentials"
+            iconName: root.isAddButton ? "list-add" : root.decoration
+            fallbackIcon: ""
+            forceMask: root.isAddButton
+            highlighted: root.isCurrentLocation || root.isItemFocused
             opacity: root.isAddButton ? 0.7 : 1.0
-            isMask: root.isAddButton || (root.bridge ? root.bridge.isSectionIconMask(root.decoration, "essentials") : false)
-            color: (root.isCurrentLocation || root.isItemFocused) ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
         }
     }
 
@@ -267,7 +271,7 @@ Item {
         keyboardFocused: root.isItemFocused
         text: {
             if (root.isAddButton) {
-                return KI18n.i18nc("@info:tooltip", "Pin new quick access item");
+                return KI18n.i18nc("@info:tooltip", "Add new essential item");
             }
             if (root.formattedPath.length > 0 && root.formattedPath !== root.display) {
                 return root.display + " (" + root.formattedPath + ")";

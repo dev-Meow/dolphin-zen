@@ -1,9 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #pragma once
 
 #include <KFilePlacesModel>
-#include <QUrl>
-#include <QHash>
 #include <QByteArray>
+#include <QHash>
+#include <QUrl>
 #include <QtQml/qqmlregistration.h>
 
 /**
@@ -20,12 +26,12 @@ class ZenPlacesMasterModel : public KFilePlacesModel
 public:
     enum AdditionalRoles {
         FormattedPathRole = Qt::UserRole + 100, ///< Tilde-collapsed local path or display URL for tooltips
-        IsEssentialRole,                        ///< Whether the place is pinned as an Essential tile
-        IsWorkspacePlaceRole,                   ///< Whether the bookmark is shown in the regular Workspace Places list
-        IsPinnedDeviceRole,                     ///< Whether the device remains visible when DevicesSection collapses
-        CapacityPercentageRole,                 ///< Mounted drive usage in percent (0..100), or -1 if not applicable
-        FreeSpaceTextRole,                      ///< Formatted free/total capacity string (KIO::convertSize) for device tooltips
-        CanTeardownRole                         ///< Whether the device can currently be unmounted or ejected
+        IsEssentialRole, ///< Whether the place is pinned as an Essential tile
+        IsWorkspacePlaceRole, ///< Whether the bookmark is shown in the regular Workspace Places list
+        IsPinnedDeviceRole, ///< Whether the device remains visible when DevicesSection collapses
+        CapacityPercentageRole, ///< Mounted drive usage in percent (0..100), or -1 if not applicable
+        FreeSpaceTextRole, ///< Formatted free/total capacity string (KIO::convertSize) for device tooltips
+        CanTeardownRole ///< Whether the device can currently be unmounted or ejected
     };
     Q_ENUM(AdditionalRoles)
 
@@ -46,8 +52,6 @@ public:
      *        that cannot be permanently deleted, only hidden.
      */
     bool isSystemItem(const QModelIndex &index) const;
-
-    void printDiagnosticPlaces() const;
 
 public Q_SLOTS:
     /**
@@ -81,10 +85,16 @@ public Q_SLOTS:
 
     /**
      * @brief Removes the item at @p index from the Workspace Places list.
-     *        If the item is still marked as an Essential tile, preserves the XBEL bookmark and sets
+     *        If the item is still marked as an Essential tile or is a system bookmark, preserves the XBEL bookmark and sets
      *        IsWorkspacePlaceRole to false; otherwise removes the XBEL bookmark via removePlace().
      */
     void removeFromWorkspacePlaces(const QModelIndex &index);
+
+    /**
+     * @brief Number of places currently hidden, including system XBEL hidden items
+     *        and entries hidden locally from Workspace Places via IsWorkspacePlaceRole.
+     */
+    int hiddenCount() const;
 
     /**
      * @brief Adds @p url to the regular Workspace Places list (or re-enables IsWorkspacePlaceRole if it was Essential-only).

@@ -1,9 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #pragma once
 
+#include <KFileItem>
 #include <QAbstractListModel>
 #include <QList>
 #include <QUrl>
-#include <KFileItem>
 
 class KCoreDirLister;
 
@@ -48,4 +54,3 @@ private:
     QList<KFileItem> m_items;
     bool m_enabled = false;
 };
-

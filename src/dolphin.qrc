@@ -3,4 +3,7 @@
 <file>dolphinui.rc</file>
 <file>dolphinuiforphones.rc</file>
 </qresource>
+<qresource prefix="/">
+<file>icons/org.kde.dolphin-zen.svg</file>
+</qresource>
 </RCC>

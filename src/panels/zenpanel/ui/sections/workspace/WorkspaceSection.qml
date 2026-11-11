@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 dev-Meow <355019589+dev-Meow@users.noreply.github.com>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
@@ -43,14 +46,15 @@ Item {
         anchors.fill: parent
         spacing: Kirigami.Units.smallSpacing
 
-        // Sektions-Header mit [⇄]-Umschalter
+        // Section header with [⇄] view-mode switcher
         ZenSectionHeader {
             id: header
+            bridge: root.bridge
             Layout.fillWidth: true
-            text: root.currentViewIndex === 0 ? KI18n.i18nc("@title:group", "Workspace") : KI18n.i18nc("@title:group", "Folder Tree")
+            text: root.currentViewIndex === 0 ? KI18n.i18nc("@title:group", "Places") : KI18n.i18nc("@title:group", "Folders")
             actionIconName: "exchange-positions"
             actionCheckable: false
-            actionToolTipText: root.currentViewIndex === 0 ? KI18n.i18nc("@info:tooltip", "Switch to folder tree") : KI18n.i18nc("@info:tooltip", "Switch to places & tabs")
+            actionToolTipText: root.currentViewIndex === 0 ? KI18n.i18nc("@info:tooltip", "Switch to Folders") : KI18n.i18nc("@info:tooltip", "Switch to \"Places\"")
 
             onActionTriggered: {
                 root.currentViewIndex = (root.currentViewIndex === 0) ? 1 : 0;
@@ -64,7 +68,7 @@ Item {
             }
         }
 
-        // Dynamisches StackLayout füllt den gesamten vertikalen Raum
+        // Dynamic StackLayout fills remaining vertical/horizontal space
         StackLayout {
             id: stackLayout
             Layout.fillWidth: true
@@ -106,6 +110,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 treeModel: root.treeModel
+                tabsModel: root.tabsModel
+                bridge: root.bridge
 
                 onFolderClicked: function (folderUrl) {
                     root.placeClicked(folderUrl);
