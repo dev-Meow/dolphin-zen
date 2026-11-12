@@ -41,7 +41,7 @@ QUrl Dolphin::homeUrl()
 
 void Dolphin::openNewWindow(const QList<QUrl> &urls, QWidget *window, const OpenNewWindowFlags &flags)
 {
-    QString command = QStringLiteral("dolphin --new-window");
+    QString command = QStringLiteral("dolphin-zen --new-window");
 
     if (flags.testFlag(OpenNewWindowFlag::Select)) {
         command.append(QLatin1String(" --select"));
@@ -152,12 +152,13 @@ QVector<QPair<QSharedPointer<OrgKdeDolphinMainWindowInterface>, QStringList>> Do
     // Look for dolphin instances among all available dbus services.
     QDBusConnectionInterface *sessionInterface = QDBusConnection::sessionBus().interface();
     const QStringList dbusServices = sessionInterface ? sessionInterface->registeredServiceNames().value() : QStringList();
-    // Don't match the service without trailing "-" (unique instance)
-    const QString pattern = QStringLiteral("org.kde.dolphin-");
+    // Don't match the service without trailing "-" or ".kdbus-" (unique instance)
+    const QString pattern = QStringLiteral("org.kde.dolphin-zen-");
+    const QString flatpakPattern = QStringLiteral("org.kde.dolphin-zen.kdbus-");
     // Don't match the pid without leading "-"
     const QString myPid = QLatin1Char('-') + QString::number(QCoreApplication::applicationPid());
     for (const QString &service : dbusServices) {
-        if (service.startsWith(pattern) && !service.endsWith(myPid)) {
+        if ((service.startsWith(pattern) || service.startsWith(flatpakPattern)) && !service.endsWith(myPid)) {
             // Check if instance can handle our URLs
             QSharedPointer<OrgKdeDolphinMainWindowInterface> interface(
                 new OrgKdeDolphinMainWindowInterface(service, QStringLiteral("/dolphin/Dolphin_1"), QDBusConnection::sessionBus()));

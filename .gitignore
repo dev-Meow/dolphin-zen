@@ -29,3 +29,6 @@ apidocs
 doxygen.log
 .directory
 .cmake/
+/.flatpak-builder/
+/flatpak-build-dir/
+/*.flatpak

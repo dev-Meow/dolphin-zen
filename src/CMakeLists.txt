@@ -531,7 +531,7 @@ ecm_add_app_icon(dolphin
     ICONS
         icons/128-apps-org.kde.dolphin-zen.png
         icons/16-apps-org.kde.dolphin-zen.png
-        icons/22-apps-org.kde.dolphin-zen.png
+        icons/24-apps-org.kde.dolphin-zen.png
         icons/32-apps-org.kde.dolphin-zen.png
         icons/48-apps-org.kde.dolphin-zen.png
         icons/64-apps-org.kde.dolphin-zen.png

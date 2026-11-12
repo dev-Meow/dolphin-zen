@@ -7156,6 +7156,24 @@ msgctxt "@action:intoolbar"
 msgid "Zoom"
 msgstr "Skalierung"
 
+#: dolphinmainwindow.cpp:2634
+#, kde-format
+msgctxt "@action:inmenu View"
+msgid "Focus ZenPanel"
+msgstr "ZenPanel fokussieren"
+
+#: dolphinmainwindow.cpp:2635
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Move keyboard focus to and from the Zen panel."
+msgstr "Tastaturfokus zum und vom ZenPanel wechseln."
+
+#: main.cpp:104
+#, kde-format
+msgctxt "@info:credit"
+msgid "Zen Panel author and maintainer"
+msgstr "ZenPanel-Autor und Betreuer"
+
 #~ msgid "Use tab for switching between right and left view"
 #~ msgstr ""
 #~ "Tabulatortaste für das Wechseln zwischen linker und rechter Ansicht "

@@ -3,6 +3,9 @@
 
 include(ECMQmlModule)
 
+remove_definitions(-DTRANSLATION_DOMAIN=\"dolphin\")
+add_definitions(-DTRANSLATION_DOMAIN=\"zenpanel\")
+
 add_library(zenpanel_panel STATIC
     zendockpanel.h
     zendockpanel.cpp
@@ -47,7 +50,7 @@ target_link_libraries(zenpanel_panel PUBLIC
 ecm_add_qml_module(zenpanel_panel
     URI "org.kde.dolphin.zenpanel"
     VERSION 1.0
-    NO_PLUGIN
+    GENERATE_PLUGIN_SOURCE
     SOURCES
         backend/ZenPanelBridge.h
         backend/ZenPanelBridge.cpp

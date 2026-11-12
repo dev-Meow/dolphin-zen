@@ -185,11 +185,13 @@ int main(int argc, char **argv)
         QObject::connect(&app, &QGuiApplication::commitDataRequest, disableSessionManagement);
         QObject::connect(&app, &QGuiApplication::saveStateRequest, disableSessionManagement);
 
+        QCoreApplication::setApplicationName(QStringLiteral("dolphin-zen"));
 #ifdef FLATPAK
         KDBusService dolphinDBusService(KDBusService::NoExitOnFailure);
 #else
         KDBusService dolphinDBusService;
 #endif
+        QCoreApplication::setApplicationName(QStringLiteral("dolphin"));
         DBusInterface interface;
         interface.setAsDaemon();
         return app.exec();
@@ -231,12 +233,12 @@ int main(int argc, char **argv)
 
     mainWindow->show();
 
-    // Allow starting Dolphin on a system that is not running DBus:
-    KDBusService::StartupOptions serviceOptions = KDBusService::Multiple;
-    if (!QDBusConnection::sessionBus().isConnected()) {
-        serviceOptions |= KDBusService::NoExitOnFailure;
-    }
+    // Register D-Bus service under org.kde.dolphin-zen while keeping "dolphin"
+    // as applicationName for KXmlGui and KConfig lookups:
+    KDBusService::StartupOptions serviceOptions = KDBusService::Multiple | KDBusService::NoExitOnFailure;
+    QCoreApplication::setApplicationName(QStringLiteral("dolphin-zen"));
     KDBusService dolphinDBusService(serviceOptions);
+    QCoreApplication::setApplicationName(QStringLiteral("dolphin"));
     DBusInterface interface;
 
     if (!app.isSessionRestored()) {
@@ -251,7 +253,7 @@ int main(int argc, char **argv)
     // 3. There is a session available to restore
     if (app.isSessionRestored() || GeneralSettings::rememberOpenedTabs()) {
         // Get saved state data for the last-closed Dolphin instance
-        const QString serviceName = QStringLiteral("org.kde.dolphin-%1").arg(QCoreApplication::applicationPid());
+        const QString serviceName = QStringLiteral("org.kde.dolphin-zen-%1").arg(QCoreApplication::applicationPid());
         const auto instancesCount = Dolphin::dolphinGuiInstances(serviceName).size();
         if (instancesCount == 1 || (app.isSessionRestored() && instancesCount > 0)) {
             const QString className = KXmlGuiWindow::classNameOfToplevel(1);

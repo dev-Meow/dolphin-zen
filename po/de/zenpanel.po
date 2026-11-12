@@ -1,0 +1,1282 @@
+# Translation of zenpanel into German.
+# SPDX-FileCopyrightText: 2026 Meow <meow@example.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: zenpanel\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-08 21:17+0100\n"
+"PO-Revision-Date: 2026-11-06 15:40+0100\n"
+"Last-Translator: Meow <meow@example.com>\n"
+"Language-Team: German <kde-i18n-de@kde.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/main.cpp:298
+#, kde-format
+msgctxt "@title:menu"
+msgid "ZenPanel Settings"
+msgstr "ZenPanel-Einstellungen"
+
+#: src/main.cpp:302 src/backend/ZenPanelBridge.cpp:1860
+#: src/backend/ZenPanelBridge.cpp:2265
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Configure ZenPanel…"
+msgstr "ZenPanel einrichten…"
+
+#: src/main.cpp:309
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Subtly highlight places open in tabs/split view"
+msgstr "In Tabs/Split-View geöffnete Orte blass hinterlegen"
+
+#: src/main.cpp:319
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Switch to existing tab/split view when clicking place"
+msgstr "Bei Klick zu bereits geöffnetem Tab/Split-View wechseln"
+
+#: src/main.cpp:331
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "List network folder items directly as individual devices"
+msgstr "Netzwerk-Ordner direkt als einzelne Geräte auflisten"
+
+#: src/main.cpp:341
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Permanently pin devices section"
+msgstr "Geräte-Sektion dauerhaft anheften"
+
+#: src/main.cpp:351 src/ui/components/ZenSettingsDialog.qml:25
+#, kde-format
+msgctxt "@title:window"
+msgid "ZenPanel Settings"
+msgstr "ZenPanel-Einstellungen"
+
+#: src/backend/ZenPanelBridge.cpp:963
+#, kde-format
+msgctxt "@title:window"
+msgid "Configure ZenPanel"
+msgstr "ZenPanel einrichten"
+
+#: src/backend/ZenPanelBridge.cpp:1422
+#, kde-format
+msgctxt "@info:status"
+msgid " (Secondary split view)"
+msgstr " (Sekundäre Split-Ansicht)"
+
+#: src/backend/ZenPanelBridge.cpp:1420
+#, kde-format
+msgctxt "@info:status"
+msgid "Switched to existing tab #%1%2:"
+msgstr "Zum bestehenden Unterfenster #%1%2 gewechselt:"
+
+#: src/backend/ZenPanelBridge.cpp:1432
+#, kde-format
+msgctxt "@info:status"
+msgid "Opened in active tab:"
+msgstr "Im aktiven Unterfenster geöffnet:"
+
+#: src/backend/ZenPanelBridge.cpp:1449
+#, kde-format
+msgctxt "@info:status"
+msgid "Opened in new tab:"
+msgstr "In neuem Unterfenster geöffnet:"
+
+#: src/backend/ZenPanelBridge.cpp:1462
+#, kde-format
+msgctxt "@info:status"
+msgid "Opened in split view:"
+msgstr "In geteilter Ansicht geöffnet:"
+
+#: src/backend/ZenPanelBridge.cpp:1475
+#, kde-format
+msgctxt "@info:status"
+msgid "Opened in new window:"
+msgstr "In neuem Fenster geöffnet:"
+
+#: src/backend/ZenPanelBridge.cpp:1540
+#, kde-format
+msgctxt "@info:status"
+msgid "Destination '%1' does not support writing."
+msgstr "Das Ziel „%1“ unterstützt keine Schreibvorgänge."
+
+#: src/backend/ZenPanelBridge.cpp:1651 src/backend/ZenPanelBridge.cpp:1726
+#: src/backend/ZenPanelBridge.cpp:1904 src/backend/ZenPanelBridge.cpp:1952
+#: src/backend/ZenPanelBridge.cpp:2072
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Open in New Tab"
+msgstr "In neuem Unterfenster öffnen"
+
+#: src/backend/ZenPanelBridge.cpp:1658 src/backend/ZenPanelBridge.cpp:1733
+#: src/backend/ZenPanelBridge.cpp:1911 src/backend/ZenPanelBridge.cpp:1960
+#: src/backend/ZenPanelBridge.cpp:2079
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Open in New Window"
+msgstr "In neuem Fenster öffnen"
+
+#: src/backend/ZenPanelBridge.cpp:1665 src/backend/ZenPanelBridge.cpp:1740
+#: src/backend/ZenPanelBridge.cpp:1918 src/backend/ZenPanelBridge.cpp:1967
+#: src/backend/ZenPanelBridge.cpp:2086
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Open in Split View"
+msgstr "In geteilter Ansicht öffnen"
+
+#: src/backend/ZenPanelBridge.cpp:1674 src/backend/ZenPanelBridge.cpp:1750
+#: src/backend/ZenPanelBridge.cpp:2100
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Remove from Quick Access"
+msgstr "Aus Schnellzugriff entfernen"
+
+#: src/backend/ZenPanelBridge.cpp:1682
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Additionally show in \"Places\""
+msgstr "Zusätzlich in \"Orte\" anzeigen"
+
+#: src/backend/ZenPanelBridge.cpp:1691 src/backend/ZenPanelBridge.cpp:1770
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Edit…"
+msgstr "Bearbeiten…"
+
+#: src/backend/ZenPanelBridge.cpp:1701 src/backend/ZenPanelBridge.cpp:1820
+#: src/backend/ZenPanelBridge.cpp:1925 src/backend/ZenPanelBridge.cpp:2048
+#: src/backend/ZenPanelBridge.cpp:2235
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: src/backend/ZenPanelBridge.cpp:1757 src/backend/ZenPanelBridge.cpp:2107
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Add to Quick Access"
+msgstr "Zu Schnellzugriff hinzufügen"
+
+#: src/backend/ZenPanelBridge.cpp:1779
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Remove from \"Places\""
+msgstr "Aus \"Orten\" entfernen"
+
+#: src/backend/ZenPanelBridge.cpp:1786
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Show in \"Places\""
+msgstr "In \"Orten\" anzeigen"
+
+#: src/backend/ZenPanelBridge.cpp:1795
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Hide \"Place\" System-wide"
+msgstr "\"Ort\" systemweit ausblenden"
+
+#: src/backend/ZenPanelBridge.cpp:1805 src/backend/ZenPanelBridge.cpp:1846
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Show all \"Places\""
+msgstr "Alle \"Orte\" anzeigen"
+
+#: src/backend/ZenPanelBridge.cpp:1840
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Add \"Place\"…"
+msgstr "\"Ort\" hinzufügen…"
+
+#: src/backend/ZenPanelBridge.cpp:1880
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Empty Trash"
+msgstr "Papierkorb leeren"
+
+#: src/backend/ZenPanelBridge.cpp:1975
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Permanently Pin Device"
+msgstr "Gerät dauerhaft anheften"
+
+#: src/backend/ZenPanelBridge.cpp:1986
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Mount"
+msgstr "Einhängen"
+
+#: src/backend/ZenPanelBridge.cpp:2036
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Hide"
+msgstr "Ausblenden"
+
+#: src/backend/ZenPanelBridge.cpp:2118
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Add to \"Places\""
+msgstr "Zu \"Orten\" hinzufügen"
+
+#: src/backend/ZenPanelBridge.cpp:2138
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Cut"
+msgstr "Ausschneiden"
+
+#: src/backend/ZenPanelBridge.cpp:2144
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Copy"
+msgstr "Kopieren"
+
+#: src/backend/ZenPanelBridge.cpp:2168
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Rename…"
+msgstr "Umbenennen…"
+
+#: src/backend/ZenPanelBridge.cpp:2182
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Move to Trash"
+msgstr "In den Papierkorb verschieben"
+
+#: src/backend/ZenPanelBridge.cpp:2201
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/backend/ZenPanelBridge.cpp:2219 src/backend/ZenPanelBridge.cpp:2252
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Show Hidden Folders"
+msgstr "Versteckte Ordner anzeigen"
+
+#: src/backend/ZenPanelBridge.cpp:2224 src/backend/ZenPanelBridge.cpp:2257
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "Limit to Home Directory"
+msgstr "Auf persönlichen Ordner beschränken"
+
+#: src/backend/ZenPlacesMasterModel.cpp:142
+#, kde-format
+msgctxt ""
+"@info:tooltip Available space out of total partition size (percent used)"
+msgid "%1 free of %2 (%3% used)"
+msgstr "%1 frei von %2 (%3% belegt)"
+
+#: src/ui/components/ZenTileDelegate.qml:69
+#, kde-format
+msgctxt "@action:button"
+msgid "Add new essential item"
+msgstr "Einen neuen Schnellzugriff hinzufügen"
+
+#: src/ui/components/ZenTileDelegate.qml:274
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Add new essential item"
+msgstr "Einen neuen Schnellzugriff hinzufügen"
+
+#: src/ui/components/ZenDeviceDelegate.qml:224
+#, kde-format
+msgctxt "@action:button"
+msgid "Unpin device"
+msgstr "Gerät lösen"
+
+#: src/ui/components/ZenDeviceDelegate.qml:224
+#, kde-format
+msgctxt "@action:button"
+msgid "Pin device"
+msgstr "Gerät anheften"
+
+#: src/ui/components/ZenDeviceDelegate.qml:242
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Release from permanently shown devices"
+msgstr "Gerät nicht mehr dauerhaft anzeigen"
+
+#: src/ui/components/ZenDeviceDelegate.qml:242
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Show device permanently even when collapsed"
+msgstr "Gerät dauerhaft anzeigen, auch wenn die Leiste eingeklappt ist"
+
+#: src/ui/components/ZenSettingsDialog.qml:29
+#: src/ui/components/ZenSettingsDialog.qml:71
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "follow \"General\" setting"
+msgstr "wie in \"Allgemein\" festgelegt"
+
+#: src/ui/components/ZenSettingsDialog.qml:33
+#: src/ui/components/ZenSettingsDialog.qml:217
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "16 Pixels (Very Small)"
+msgstr "16 Pixel (Sehr klein)"
+
+#: src/ui/components/ZenSettingsDialog.qml:37
+#: src/ui/components/ZenSettingsDialog.qml:221
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "22 Pixels (Standard / Small)"
+msgstr "22 Pixel (Standard / Klein)"
+
+#: src/ui/components/ZenSettingsDialog.qml:41
+#: src/ui/components/ZenSettingsDialog.qml:225
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "32 Pixels (Medium)"
+msgstr "32 Pixel (Mittel)"
+
+#: src/ui/components/ZenSettingsDialog.qml:45
+#: src/ui/components/ZenSettingsDialog.qml:229
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "48 Pixels (Large)"
+msgstr "48 Pixel (Groß)"
+
+#: src/ui/components/ZenSettingsDialog.qml:49
+#: src/ui/components/ZenSettingsDialog.qml:233
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "64 Pixels (Very Large)"
+msgstr "64 Pixel (Sehr groß)"
+
+#: src/ui/components/ZenSettingsDialog.qml:56
+#: src/ui/components/ZenSettingsDialog.qml:75
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "System Theme"
+msgstr "im System-Design"
+
+#: src/ui/components/ZenSettingsDialog.qml:60
+#: src/ui/components/ZenSettingsDialog.qml:79
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "always colorful"
+msgstr "immer bunt"
+
+#: src/ui/components/ZenSettingsDialog.qml:64
+#: src/ui/components/ZenSettingsDialog.qml:83
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "always schematic"
+msgstr "immer schematisch"
+
+#: src/ui/components/ZenSettingsDialog.qml:104
+#, kde-format
+msgctxt "@title:tab"
+msgid "General"
+msgstr "Allgemein"
+
+#: src/ui/components/ZenSettingsDialog.qml:107
+#, kde-format
+msgctxt "@title:tab"
+msgid "Essentials"
+msgstr "Schnellzugriff"
+
+#: src/ui/components/ZenSettingsDialog.qml:110
+#, kde-format
+msgctxt "@title:tab"
+msgid "Workspace"
+msgstr "Arbeitsbereich"
+
+#: src/ui/components/ZenSettingsDialog.qml:113
+#, kde-format
+msgctxt "@title:tab"
+msgid "Devices"
+msgstr "Geräte"
+
+#: src/ui/components/ZenSettingsDialog.qml:134
+#, kde-format
+msgctxt "@title:group"
+msgid "Appearance"
+msgstr "Anzeigestil"
+
+#: src/ui/components/ZenSettingsDialog.qml:141
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"General settings are applied to all sections of ZenPanel, but can be "
+"overwritten in each section."
+msgstr ""
+"Allgemeine Einstellungen werden auf das gesamte ZenPanel angewendet, können "
+"aber in jeder Sektion überschrieben werden."
+
+#: src/ui/components/ZenSettingsDialog.qml:149
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Display List Elements as:"
+msgstr "Zeige Listenelemente im:"
+
+#: src/ui/components/ZenSettingsDialog.qml:157
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "Dolphin Style (compact)"
+msgstr "Dolphin-Stil (kompakt)"
+
+#: src/ui/components/ZenSettingsDialog.qml:161
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "Kirigami Style"
+msgstr "Kirigami-Stil"
+
+#: src/ui/components/ZenSettingsDialog.qml:177
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Display Icons as:"
+msgstr "Symbole erscheinen:"
+
+#: src/ui/components/ZenSettingsDialog.qml:197
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"Icon packs can be incomplete, but most provide symbolic icons up to 22px and "
+"colorful icons for larger settings automaticaly. If set so, ZenPanel tries "
+"to overwrite this behavior, by scaling up, or down."
+msgstr ""
+"Symbolpakete können unvollständig sein, stellen aber in der Regel "
+"schematische Symbole bis zu einer Größe von 22pt und darüber hinaus bunte "
+"Symbole zur Verfügung. Wenn ausgewählt, versucht ZenPanel dieses Verhalten "
+"durch hoch- oder runterskalieren zu überschreiben."
+
+#: src/ui/components/ZenSettingsDialog.qml:205
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Global Icon Size:"
+msgstr "Globale Symbolgröße:"
+
+#: src/ui/components/ZenSettingsDialog.qml:213
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "Automatic (Dolphin Default)"
+msgstr "Automatisch (Dolphin-Vorgabe)"
+
+#: src/ui/components/ZenSettingsDialog.qml:260
+#, kde-format
+msgctxt "@title:group"
+msgid "Trash"
+msgstr "Papierkorb"
+
+#: src/ui/components/ZenSettingsDialog.qml:265
+#, kde-format
+msgctxt "@option:check"
+msgid "Show trash section."
+msgstr "Zeige den Bereich \"Papierkorb\""
+
+#: src/ui/components/ZenSettingsDialog.qml:278
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"If selected, the trash section will be shown at the bottom (or right side, "
+"if docked horizontally) of ZenPanel."
+msgstr ""
+"Wenn aktiviert, wird der Papierkorb am unteren Ende (oder rechten Rand, wenn "
+"horizontal angeheftet) des ZenPanel angezeigt."
+
+#: src/ui/components/ZenSettingsDialog.qml:286
+#: src/ui/components/ZenSettingsDialog.qml:378
+#: src/ui/components/ZenSettingsDialog.qml:473
+#: src/ui/components/ZenSettingsDialog.qml:570
+#: src/ui/components/ZenSettingsDialog.qml:651
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Set icon style to:"
+msgstr "Stelle den Symbolstil auf:"
+
+#: src/ui/components/ZenSettingsDialog.qml:304
+#: src/ui/components/ZenSettingsDialog.qml:395
+#: src/ui/components/ZenSettingsDialog.qml:490
+#: src/ui/components/ZenSettingsDialog.qml:587
+#: src/ui/components/ZenSettingsDialog.qml:668
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Set icon size to:"
+msgstr "Stelle die Symbolgröße auf:"
+
+#: src/ui/components/ZenSettingsDialog.qml:330
+#, kde-format
+msgctxt "@title:group"
+msgid "Essentials"
+msgstr "Schnellzugriff"
+
+#: src/ui/components/ZenSettingsDialog.qml:337
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"\"Essentials\" is the top (left, if docked horizontally) section of ZenPanel "
+"and provides a space saving icon grid for quick access. Icons can be "
+"arranged freely by drag & drop. There are several ways to add entries: drag "
+"& drop, context menu, or a dedicated \"add icon\" that can be activated."
+msgstr ""
+"Der \"Schnellzugriff\"-Bereich ist ein platzsparendes Symbolraster und der "
+"oberste (linke, wenn horizontal angeheftet) Bereich im ZenPanel. Symbole "
+"können per \"ziehen & platzieren\" frei arrangiert werden. Einträge können "
+"auf vielfältige Art hinzugefügt werden: durch ziehen & platzieren, über das "
+"Kontextmenü, oder durch ein aktivierbares \"Hinzufügen\"-Symbol."
+
+#: src/ui/components/ZenSettingsDialog.qml:345
+#, kde-format
+msgctxt "@label:spinbox"
+msgid "Limit the allowed number of icons to:"
+msgstr "Begrenze die erlaubte Symbolanzahl auf:"
+
+#: src/ui/components/ZenSettingsDialog.qml:361
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Add [+]:"
+msgstr "Hinzufügen [+]:"
+
+#: src/ui/components/ZenSettingsDialog.qml:362
+#, kde-format
+msgctxt "@option:check"
+msgid "Display an \"add\" icon [+]"
+msgstr "Zeige ein \"Hinzufügen\"-Symbol [+]"
+
+#: src/ui/components/ZenSettingsDialog.qml:373
+#, kde-format
+msgctxt "@title:group"
+msgid "Icon settings:"
+msgstr "Symboleinstellungen:"
+
+#: src/ui/components/ZenSettingsDialog.qml:420
+#, kde-format
+msgctxt "@title:group"
+msgid "Places & Bookmarks"
+msgstr "Orte & Lesezeichen"
+
+#: src/ui/components/ZenSettingsDialog.qml:427
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"\"Workspace\" is the middle section of ZenPanel. It consists of \"Places & "
+"Bookmarks\", a list style panel and \"Folders\", a tree view style panel, "
+"between which you can easily switch."
+msgstr ""
+"Der \"Arbeitsbereich\" stellt den mittleren Bereich des ZenPanel dar. Er "
+"besteht aus einem \"Orte & Lesezeichen\"-Panel im Listenstil und einem "
+"\"Ordner\"-Panel im Baumstrukturstil, zwischen denen einfach gewechselt "
+"werden kann."
+
+#: src/ui/components/ZenSettingsDialog.qml:435
+#, kde-format
+msgctxt "@label:listbox"
+msgid "Default View:"
+msgstr "Standardansicht:"
+
+#: src/ui/components/ZenSettingsDialog.qml:443
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "Places"
+msgstr "Orte"
+
+#: src/ui/components/ZenSettingsDialog.qml:447
+#, kde-format
+msgctxt "@item:inlistbox"
+msgid "Folders"
+msgstr "Ordner"
+
+#: src/ui/components/ZenSettingsDialog.qml:465
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid "Panel which will be displayed by default at startup."
+msgstr "Das Panel, welches bei Start standardmäßig angezeigt werden soll."
+
+#: src/ui/components/ZenSettingsDialog.qml:507
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Tabs:"
+msgstr "Unterfenster:"
+
+#: src/ui/components/ZenSettingsDialog.qml:508
+#, kde-format
+msgctxt "@option:check"
+msgid "Highlight places currently open in tabs."
+msgstr "Hervorheben von Orten, die aktuell in Unterfenstern geöffnet sind."
+
+#: src/ui/components/ZenSettingsDialog.qml:519
+#, kde-format
+msgctxt "@option:check"
+msgid "Switch to tab, if already open."
+msgstr "Zum Unterfenster wechseln, wenn bereits geöffnet."
+
+#: src/ui/components/ZenSettingsDialog.qml:530
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Auto hide:"
+msgstr "Automatisches Ausblenden:"
+
+#: src/ui/components/ZenSettingsDialog.qml:531
+#, kde-format
+msgctxt "@option:check"
+msgid "Hide places already in quick access."
+msgstr "Blende Orte aus, die im Schnellzugriff vorhanden sind."
+
+#: src/ui/components/ZenSettingsDialog.qml:542
+#: src/ui/sections/workspace/WorkspaceSection.qml:51
+#, kde-format
+msgctxt "@title:group"
+msgid "Folders"
+msgstr "Ordner"
+
+#: src/ui/components/ZenSettingsDialog.qml:547
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Tree Scope:"
+msgstr "Umfang:"
+
+#: src/ui/components/ZenSettingsDialog.qml:548
+#, kde-format
+msgctxt "@option:check"
+msgid "Limit to user's home folder"
+msgstr "Auf persönlichen Ordner beschränken"
+
+#: src/ui/components/ZenSettingsDialog.qml:559
+#, kde-format
+msgctxt "@option:check"
+msgid "Show hidden folders."
+msgstr "Versteckte Ordner anzeigen."
+
+#: src/ui/components/ZenSettingsDialog.qml:612
+#: src/ui/sections/DevicesSection.qml:161
+#, kde-format
+msgctxt "@title:group"
+msgid "Devices & Network"
+msgstr "Geräte & Netzwerk"
+
+#: src/ui/components/ZenSettingsDialog.qml:619
+#, kde-format
+msgctxt "@info:whatsthis"
+msgid ""
+"\"Devices\" is the bottom (right, if docked horizontally) section of "
+"ZenPanel. It lists removable media, mounted partitions, and optionally "
+"network devices. It collapses, if not in use, but individual devices, or the "
+"section itself can be pinned."
+msgstr ""
+"Der \"Geräte\"-Bereich stellt den unteren (rechten, wenn horizontal "
+"angeheftet) Bereich des ZenPanel dar. Er listet Wechsellaufwerke, "
+"eingehängte Partitionen und optional Netzwerkgeräte auf. Bei Nichtbenutzung "
+"klappt er automatisch zu, einzelne Geräte, oder der ganze Bereich können "
+"dauerhaft angeheftet werden."
+
+#: src/ui/components/ZenSettingsDialog.qml:621
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Pin Section:"
+msgstr "Bereich anheften:"
+
+#: src/ui/components/ZenSettingsDialog.qml:622
+#, kde-format
+msgctxt "@option:check"
+msgid "Keep devices section permanently pinned (only if docked left or right)"
+msgstr ""
+"Gerätebereich dauerhaft angeheftet lassen (nur wenn links oder rechts "
+"angeheftet)."
+
+#: src/ui/components/ZenSettingsDialog.qml:633
+#, kde-format
+msgctxt "@label:checkbox"
+msgid "Network Folder:"
+msgstr "Netzwerkgeräteordner:"
+
+#: src/ui/components/ZenSettingsDialog.qml:640
+#, kde-format
+msgctxt "@option:check"
+msgid "List network folder items directly as individual devices"
+msgstr "Einträge des Netzwerkordners direkt als einzelne Geräte auflisten"
+
+#: src/ui/sections/DevicesSection.qml:166
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Unpin section: panel collapses automatically"
+msgstr "Bereich lösen: klappt automatisch zu."
+
+#: src/ui/sections/DevicesSection.qml:166
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Pin section: panel stays expanded."
+msgstr "Bereich anheften: bleibt dauerhaft aufgeklappt."
+
+#: src/ui/sections/workspace/WorkspaceSection.qml:51
+#, kde-format
+msgctxt "@title:group"
+msgid "Places"
+msgstr "Orte"
+
+#: src/ui/sections/workspace/WorkspaceSection.qml:54
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Switch to Folders"
+msgstr "Zu Ordnern wechseln"
+
+#: src/ui/sections/workspace/WorkspaceSection.qml:54
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Switch to \"Places\""
+msgstr "Zu \"Orten\" wechseln"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:11
+#. i18n: ectx: label, entry (MaxEssentials), group (General)
+#: rc.cpp:3
+#, kde-format
+msgid "Maximum number of visible essentials tiles in the quick-access grid"
+msgstr "Maximale Anzahl sichtbarer Schnellzugriff-Kacheln"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:17
+#. i18n: ectx: label, entry (ShowAddEssentialButton), group (General)
+#: rc.cpp:6
+#, kde-format
+msgid "Show the [+] tile at the end of the essentials grid"
+msgstr "Die [+]-Kachel am Ende des Schnellzugriff-Grids anzeigen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:21
+#. i18n: ectx: label, entry (EssentialsIconStyle), group (General)
+#: rc.cpp:9
+#, kde-format
+msgid "Icon rendering style for the essentials quick-access grid"
+msgstr "Icon-Darstellungsstil für den Schnellzugriff"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:24
+#. i18n: ectx: label, entry (EssentialsIconStyle), group (General)
+#: rc.cpp:12
+#, kde-format
+msgid "Full color icons (KDE standard from 32px)"
+msgstr "Farbige Icons (KDE-Standard ab 32px)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:27
+#. i18n: ectx: label, entry (EssentialsIconStyle), group (General)
+#: rc.cpp:15
+#, kde-format
+msgid "Schematic monochrome outline icons (sidebar menu style)"
+msgstr "Schematische monochrome Outline-Icons (Seitenleisten-/Menü-Stil)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:33
+#. i18n: ectx: label, entry (HighlightOpenTabPlaces), group (General)
+#: rc.cpp:18
+#, kde-format
+msgid "Subtly highlight places currently open in Dolphin tabs or split views"
+msgstr "In Tabs oder Split-Views geöffnete Orte blass hinterlegen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:37
+#. i18n: ectx: label, entry (SwitchToExistingTab), group (General)
+#: rc.cpp:21
+#, kde-format
+msgid ""
+"Switch to already open tab/split view when clicking a place instead of "
+"reopening"
+msgstr "Bei Klick auf einen Ort zu bereits geöffnetem Tab/Split-View wechseln"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:41
+#. i18n: ectx: label, entry (HideEssentialsInWorkspace), group (General)
+#: rc.cpp:24
+#, kde-format
+msgid "Hide entries in \"Places\" that are already present in Quick Access"
+msgstr "Einträge in \"Orte\" ausblenden, die bereits im Schnellzugriff vorhanden sind"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:45
+#. i18n: ectx: label, entry (DefaultWorkspaceView), group (General)
+#: rc.cpp:27
+#, kde-format
+msgid "Default view mode for the workspace section"
+msgstr "Standard-Ansichtsmodus für den Arbeitsbereich"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:53
+#. i18n: ectx: label, entry (DevicesPinned), group (General)
+#: rc.cpp:30
+#, kde-format
+msgid "Keep the devices and hardware section permanently pinned open"
+msgstr "Geräte- und Hardware-Bereich dauerhaft angeheftet lassen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:57
+#. i18n: ectx: label, entry (ExpandNetworkFolder), group (General)
+#: rc.cpp:33
+#, kde-format
+msgid ""
+"List entries of the remote:/ network folder inline as individual device items"
+msgstr "Einträge des remote:/-Netzwerkordners direkt als Geräte auflisten"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:61
+#. i18n: ectx: label, entry (ShowHiddenFoldersInTree), group (General)
+#: rc.cpp:36
+#, kde-format
+msgid "Show hidden directories in the embedded folder tree view"
+msgstr "Versteckte Ordner im Verzeichnisbaum anzeigen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:65
+#. i18n: ectx: label, entry (LimitTreeToHome), group (General)
+#: rc.cpp:39
+#, kde-format
+msgid "Limit the embedded folder tree view to the user's home directory"
+msgstr "Verzeichnisbaum auf den persönlichen Ordner beschränken"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:69
+#. i18n: ectx: label, entry (ShowTrashSection), group (General)
+#: rc.cpp:42
+#, kde-format
+msgid "Show dedicated trash section in panel"
+msgstr "Eigenen Papierkorbbereich im Panel anzeigen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:73
+#. i18n: ectx: label, entry (GlobalIconStyle), group (General)
+#: rc.cpp:45
+#, kde-format
+msgid ""
+"Global icon style (0 = theme default from 32px, 1 = color, 2 = monochrome)"
+msgstr ""
+"Globaler Icon-Stil (0 = KDE-Standard ab 32px, 1 = farbig, 2 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:79
+#. i18n: ectx: label, entry (PreferOutlineIcons), group (General)
+#: rc.cpp:48
+#, kde-format
+msgid "Prefer schematic outline icons even at larger icon sizes"
+msgstr "Schematische Kontur-Icons auch bei größeren Icongrößen bevorzugen"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:83
+#. i18n: ectx: label, entry (CustomEssentialsIconSize), group (General)
+#: rc.cpp:51
+#, kde-format
+msgid ""
+"Custom icon size for Essentials quick-access (0 to follow global setting)"
+msgstr ""
+"Benutzerdefinierte Symbolgröße für Schnellzugriff (0 = globale Einstellung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:89
+#. i18n: ectx: label, entry (CustomPlacesIconSize), group (General)
+#: rc.cpp:54
+#, kde-format
+msgid "Custom icon size for Places list (0 to follow global setting)"
+msgstr "Benutzerdefinierte Symbolgröße für Ortsliste (0 = globale Einstellung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:95
+#. i18n: ectx: label, entry (CustomDevicesIconSize), group (General)
+#: rc.cpp:57
+#, kde-format
+msgid "Custom icon size for Devices section (0 to follow global setting)"
+msgstr ""
+"Benutzerdefinierte Symbolgröße für den Gerätebereich (0 = folgt globaler Einstellung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:101
+#. i18n: ectx: label, entry (CustomTreeIconSize), group (General)
+#: rc.cpp:60
+#, kde-format
+msgid "Custom icon size for Folder Tree (0 to follow global setting)"
+msgstr ""
+"Benutzerdefinierte Symbolgröße für die Ordnerstruktur (0 = folgt globaler Einstellung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:107
+#. i18n: ectx: label, entry (CustomTrashIconSize), group (General)
+#: rc.cpp:63
+#, kde-format
+msgid "Custom icon size for Trash section (0 to follow global setting)"
+msgstr ""
+"Benutzerdefinierte Symbolgröße für den Papierkorb (0 = folgt globaler Einstellung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:113
+#. i18n: ectx: label, entry (CustomEssentialsIconStyle), group (General)
+#: rc.cpp:66
+#, kde-format
+msgid ""
+"Custom icon style for Essentials (0 = follow global, 1 = theme default, 2 = "
+"color, 3 = monochrome)"
+msgstr ""
+"Benutzerdefinierter Icon-Stil für Schnellzugriff (0 = global, 1 = Standard, "
+"2 = farbig, 3 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:119
+#. i18n: ectx: label, entry (CustomPlacesIconStyle), group (General)
+#: rc.cpp:69
+#, kde-format
+msgid ""
+"Custom icon style for Places (0 = follow global, 1 = theme default, 2 = "
+"color, 3 = monochrome)"
+msgstr ""
+"Benutzerdefinierter Icon-Stil für Ortsliste (0 = global, 1 = Standard, 2 = "
+"farbig, 3 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:125
+#. i18n: ectx: label, entry (CustomDevicesIconStyle), group (General)
+#: rc.cpp:72
+#, kde-format
+msgid ""
+"Custom icon style for Devices (0 = follow global, 1 = theme default, 2 = "
+"color, 3 = monochrome)"
+msgstr ""
+"Benutzerdefinierter Icon-Stil für Gerätebereich (0 = global, 1 = Standard, 2 "
+"= farbig, 3 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:131
+#. i18n: ectx: label, entry (CustomTreeIconStyle), group (General)
+#: rc.cpp:75
+#, kde-format
+msgid ""
+"Custom icon style for Folder Tree (0 = follow global, 1 = theme default, 2 = "
+"color, 3 = monochrome)"
+msgstr ""
+"Benutzerdefinierter Icon-Stil für Ordnerstruktur (0 = global, 1 = Standard, "
+"2 = farbig, 3 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:137
+#. i18n: ectx: label, entry (CustomTrashIconStyle), group (General)
+#: rc.cpp:78
+#, kde-format
+msgid ""
+"Custom icon style for Trash (0 = follow global, 1 = theme default, 2 = "
+"color, 3 = monochrome)"
+msgstr ""
+"Benutzerdefinierter Icon-Stil für Papierkorb (0 = global, 1 = Standard, 2 = "
+"farbig, 3 = monochrom)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:143
+#. i18n: ectx: label, entry (DevicesSectionHeight), group (General)
+#: rc.cpp:81
+#, kde-format
+msgid "Height of the devices section when pinned in vertical mode"
+msgstr "Höhe des Gerätebereichs, wenn im vertikalen Modus angeheftet"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:149
+#. i18n: ectx: label, entry (HorizontalEssentialsWidth), group (General)
+#: rc.cpp:84
+#, kde-format
+msgid "Width of the essentials section when docked horizontally"
+msgstr "Breite des Schnellzugriffsbereichs wenn horizontal angeheftet"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:155
+#. i18n: ectx: label, entry (HorizontalDevicesWidth), group (General)
+#: rc.cpp:87
+#, kde-format
+msgid "Width of the devices section when docked horizontally"
+msgstr "Breite des Gerätebereichs wenn horizontal angeheftet"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:176
+#. i18n: ectx: label, entry (LookFeelMode), group (Appearance)
+#: rc.cpp:90
+#, kde-format
+msgid "Visual presentation mode (Dolphin compact vs. modern Kirigami)"
+msgstr "Visueller Darstellungsmodus (Dolphin-Kompakt vs. modernes Kirigami)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:190
+#. i18n: ectx: label, entry (CustomDolphinRowHeight), group (Appearance)
+#: rc.cpp:93
+#, kde-format
+msgid ""
+"Custom item row height for Dolphin compact mode (-1 for auto-calculation via "
+"QStyle)"
+msgstr ""
+"Benutzerdefinierte Zeilenhöhe für Dolphin-Kompaktmodus (-1 für automatische "
+"QStyle-Berechnung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:196
+#. i18n: ectx: label, entry (CustomDolphinIconSize), group (Appearance)
+#: rc.cpp:96
+#, kde-format
+msgid ""
+"Custom icon size for Dolphin compact mode (-1 for auto-reading from "
+"dolphinrc)"
+msgstr ""
+"Benutzerdefinierte Icongröße für Dolphin-Kompaktmodus (-1 für automatisches "
+"Auslesen aus dolphinrc)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:202
+#. i18n: ectx: label, entry (CustomDolphinLateralMargin), group (Appearance)
+#: rc.cpp:99
+#, kde-format
+msgid ""
+"Lateral padding in list delegates for Dolphin compact mode in pixels "
+"(KFilePlacesView standard: 4px)"
+msgstr ""
+"Seitlicher Abstand für Listenelemente im Dolphin-Kompaktmodus in Pixeln "
+"(KFilePlacesView-Standard: 4px)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:208
+#. i18n: ectx: label, entry (CustomDolphinCornerRadius), group (Appearance)
+#: rc.cpp:102
+#, kde-format
+msgid ""
+"Selection and hover corner radius in pixels for Dolphin compact mode (Breeze "
+"standard: 3px)"
+msgstr ""
+"Eckenradius für Auswahl und Hover im Dolphin-Kompaktmodus in Pixeln (Breeze-"
+"Standard: 3px)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:219
+#. i18n: ectx: label, entry (CustomKirigamiRowHeight), group (Appearance)
+#: rc.cpp:105
+#, kde-format
+msgid ""
+"Custom item row height for System/Kirigami mode (-1 for dynamic gridUnit "
+"scaling)"
+msgstr ""
+"Benutzerdefinierte Zeilenhöhe für System/Kirigami-Modus (-1 für dynamische "
+"gridUnit-Skalierung)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:225
+#. i18n: ectx: label, entry (CustomKirigamiIconSize), group (Appearance)
+#: rc.cpp:108
+#, kde-format
+msgid ""
+"Custom icon size for System/Kirigami mode (-1 for dynamic "
+"iconSizes.smallMedium)"
+msgstr ""
+"Benutzerdefinierte Icongröße für System/Kirigami-Modus (-1 für dynamisches "
+"iconSizes.smallMedium)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:231
+#. i18n: ectx: label, entry (CustomKirigamiLateralMargin), group (Appearance)
+#: rc.cpp:111
+#, kde-format
+msgid ""
+"Lateral padding in list delegates for System/Kirigami mode in pixels (-1 for "
+"smallSpacing)"
+msgstr ""
+"Seitlicher Abstand für Listenelemente im System/Kirigami-Modus in Pixeln (-1 "
+"für smallSpacing)"
+
+#. i18n: file: src/config/zenpanelsettings.kcfg:237
+#. i18n: ectx: label, entry (CustomKirigamiCornerRadius), group (Appearance)
+#: rc.cpp:114
+#, kde-format
+msgid ""
+"Selection and hover corner radius in pixels for System/Kirigami mode (-1 for "
+"Kirigami.Units.cornerRadius)"
+msgstr ""
+"Eckenradius für Auswahl und Hover im System/Kirigami-Modus in Pixeln (-1 für "
+"Kirigami.Units.cornerRadius)"
+
+#, kde-format
+#~ msgctxt "@action:inmenu"
+#~ msgid "Show All Entries"
+#~ msgstr "Alle Einträge anzeigen"
+
+#, kde-format
+#~ msgctxt "@action:inmenu"
+#~ msgid "Add Entry…"
+#~ msgstr "Eintrag hinzufügen…"
+
+#, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Workspace"
+#~ msgstr "Arbeitsbereich"
+
+#, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Folder Tree"
+#~ msgstr "Ordnerstruktur"
+
+#, kde-format
+#~ msgctxt "@info:tooltip"
+#~ msgid "Do not keep device permanently shown"
+#~ msgstr "Gerät nicht mehr dauerhaft anzeigen"
+
+#, fuzzy, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Devices & Hardware"
+#~ msgstr "Geräte & Netzwerk"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Devices Icon Style:"
+#~ msgstr "Icon-Stil für Geräte:"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Devices Icon Size:"
+#~ msgstr "Icongröße für Geräte:"
+
+#, kde-format
+#~ msgctxt "@info:tooltip"
+#~ msgid "Automatically collapse device list"
+#~ msgstr "Geräteliste automatisch einklappen"
+
+#, kde-format
+#~ msgctxt "@info:tooltip"
+#~ msgid "Keep device list permanently pinned in panel"
+#~ msgstr "Geräteliste dauerhaft im Panel anheften"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Places & Bookmarks"
+#~ msgstr "Orte & Lesezeichen"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Folder Structure (Tree View)"
+#~ msgstr "Ordnerstruktur (Verzeichnisbaum)"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Places Icon Style:"
+#~ msgstr "Icon-Stil für Orte:"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Places Icon Size:"
+#~ msgstr "Icongröße für Orte:"
+
+#, kde-format
+#~ msgctxt "@label:checkbox"
+#~ msgid "Tab Highlighting:"
+#~ msgstr "Tab-Hervorhebung:"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Subtly highlight places open in tabs/split view"
+#~ msgstr "In Tabs/Split-View geöffnete Orte blass hinterlegen"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Switch to existing tab when clicking place"
+#~ msgstr "Bei Klick zu bereits geöffnetem Tab wechseln"
+
+#, fuzzy, kde-format
+#~ msgctxt "@label:checkbox"
+#~ msgid "Deduplication:"
+#~ msgstr "Gerätebereich:"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Show hidden folders in folder tree"
+#~ msgstr "Versteckte Ordner im Verzeichnisbaum anzeigen"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Tree Icon Style:"
+#~ msgstr "Icon-Stil für Ordnerstruktur:"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Tree Icon Size:"
+#~ msgstr "Icongröße für Ordnerstruktur:"
+
+#, kde-format
+#~ msgctxt "@info:tooltip"
+#~ msgid "Pin new quick access item"
+#~ msgstr "Neuen Schnellzugriff anheften"
+
+#, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Quick Access (Essentials)"
+#~ msgstr "Schnellzugriff (Essentials)"
+
+#, kde-format
+#~ msgctxt "@label:spinbox"
+#~ msgid "Maximum Tiles:"
+#~ msgstr "Maximale Kacheln:"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Show add tile [+] at end of grid"
+#~ msgstr "Hinzufügen-Kachel [+] am Ende des Grids anzeigen"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Tile Icon Style:"
+#~ msgstr "Icon-Stil für Kacheln:"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Tile Icon Size:"
+#~ msgstr "Icongröße für Kacheln:"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "KDE Standard (Theme default from 32px)"
+#~ msgstr "KDE-Standard (Theme-Vorgabe ab 32px)"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Full Color (Always rich color)"
+#~ msgstr "Farbig (Immer bunt)"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Schematic / Monochrome (Always outline)"
+#~ msgstr "Schematisch / Monochrom (Immer Kontur)"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Look & Feel:"
+#~ msgstr "Look & Feel:"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Dolphin Compact (Classic Information Density)"
+#~ msgstr "Dolphin-Kompakt (Klassische Informationsdichte)"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Modern / Kirigami (Spacious & Touch-Friendly)"
+#~ msgstr "Modern / Kirigami (Luftig & Touch-optimiert)"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Global Icon Style:"
+#~ msgstr "Globaler Icon-Stil:"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Show dedicated trash section at bottom of panel"
+#~ msgstr "Eigenen Papierkorbbereich am unteren Panelrand anzeigen"
+
+#, fuzzy, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Trash Icon Style:"
+#~ msgstr "Icon-Stil für Ordnerstruktur:"
+
+#, fuzzy, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Trash Icon Size:"
+#~ msgstr "Icongröße für Ordnerstruktur:"
+
+#, kde-format
+#~ msgctxt "@action:inmenu"
+#~ msgid "Add to Quick Access %1"
+#~ msgstr "Zu Schnellzugriff hinzufügen %1"
+
+#, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Workspace & Tabs"
+#~ msgstr "Arbeitsbereich & Tabs"
+
+#, kde-format
+#~ msgctxt "@title:group"
+#~ msgid "Devices & Folder Tree"
+#~ msgstr "Geräte & Ordnerbaum"
+
+#, kde-format
+#~ msgctxt "@label:checkbox"
+#~ msgid "Folder Tree:"
+#~ msgstr "Ordnerbaum:"
+
+#, kde-format
+#~ msgctxt "@item:inlistbox"
+#~ msgid "Full Color (KDE Standard)"
+#~ msgstr "Farbig (KDE-Standard)"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Icon Style:"
+#~ msgstr "Icon-Stil:"
+
+#, kde-format
+#~ msgctxt "@label:checkbox"
+#~ msgid "Outline Icons:"
+#~ msgstr "Kontur-Icons:"
+
+#, kde-format
+#~ msgctxt "@option:check"
+#~ msgid "Prefer schematic outline icons (even at larger sizes)"
+#~ msgstr "Schematische Kontur-Icons bevorzugen (auch bei größeren Icongrößen)"
+
+#, kde-format
+#~ msgctxt "@label:listbox"
+#~ msgid "Icon Size (Places & Devices):"
+#~ msgstr "Icongröße (Orte & Geräte):"

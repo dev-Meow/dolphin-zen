@@ -3,7 +3,7 @@
 **Dolphin-Zen** is a fork of [KDE Dolphin](https://apps.kde.org/dolphin/), enhanced with the native **ZenPanel** — a modern QtQuick / Kirigami sidebar inspired by the awesome Zen Browser [Zen Browser](https://zen-browser.app/).
 
 > [!NOTE]
-> **Dolphin-Zen is currently based on Dolphin 26.08.2**  
+> **I made Dolphin-Zen for private education**  
 > Every Feature of Dolphin should be preserved and still be functional.
 > Dolphin-Zen and Dolphin should be ABI compatible, so they should be able to run side-by-side.
 > I made it for my personal use - no support is promised. No Feature is promised. No Bugfix is promised. No Stability is promised.
