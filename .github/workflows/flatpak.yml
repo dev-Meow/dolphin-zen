@@ -39,7 +39,7 @@ jobs:
 
       - name: Create Flatpak bundle
         run: |
-          flatpak build-bundle repo dolphin-zen.flatpak org.kde.dolphin-zen
+          flatpak build-bundle repo dolphin-zen.flatpak org.kde.dolphin-zen main
 
       - name: Upload Flatpak artifact
         uses: actions/upload-artifact@v4
