@@ -136,10 +136,70 @@ Item {
         focus: true
         activeFocusOnTab: true
         keyNavigationEnabled: true
+        selectionBehavior: TableView.SelectRows
+        selectionMode: TableView.SingleSelection
+
+        // Permanently reserve the slim scrollbar lane on the right so tree rows span at least the full panel width
+        columnWidthProvider: function (column) {
+            const minWidth = Math.max(0, treeView.width - verticalScrollBar.implicitWidth - 2);
+            return Math.max(minWidth, treeView.implicitColumnWidth(column));
+        }
+
+        // Dynamically size rows to match the configured treeIconSize and font metrics
+        rowHeightProvider: function (row) {
+            const iconSz = root.bridge ? root.bridge.treeIconSize : Kirigami.Units.iconSizes.smallMedium;
+            const baseRowH = root.bridge ? root.bridge.treeRowHeight : Math.round(Kirigami.Units.gridUnit * 1.35);
+            return Math.max(baseRowH, iconSz + Kirigami.Units.smallSpacing);
+        }
+
+        onWidthChanged: {
+            treeView.forceLayout();
+        }
+
+        onContentWidthChanged: {
+            const maxContentX = Math.max(0, treeView.contentWidth - treeView.width);
+            if (treeView.contentX > maxContentX) {
+                treeView.contentX = maxContentX;
+            }
+            if (horizontalScrollBar.isNeeded && (sectionHoverHandler.hovered || treeView.activeFocus)) {
+                horizontalScrollBar.revealTemporarily();
+            }
+        }
+
+        onRowsChanged: {
+            Qt.callLater(treeView.forceLayout);
+        }
+
+        onExpanded: {
+            Qt.callLater(treeView.forceLayout);
+            horizontalScrollBar.revealTemporarily();
+        }
+
+        onCollapsed: {
+            Qt.callLater(treeView.forceLayout);
+            horizontalScrollBar.revealTemporarily();
+        }
+
+        Connections {
+            target: root.bridge
+            function onThemeMetricsChanged() {
+                treeView.forceLayout();
+            }
+            function onPlacesIconSizeSettingChanged() {
+                treeView.forceLayout();
+            }
+            function onCustomSectionIconSizesChanged() {
+                treeView.forceLayout();
+            }
+            function onLookFeelModeChanged() {
+                treeView.forceLayout();
+            }
+        }
 
         QQC2.ScrollBar.vertical: ZenScrollBar {
             id: verticalScrollBar
             parent: treeView
+            z: 10
             x: treeView.width - width
             y: 0
             height: treeView.height
@@ -151,6 +211,7 @@ Item {
         QQC2.ScrollBar.horizontal: ZenScrollBar {
             id: horizontalScrollBar
             parent: treeView
+            z: 10
             x: 0
             y: treeView.height - height
             width: treeView.width - verticalScrollBar.width
@@ -163,7 +224,10 @@ Item {
             flickable: treeView
             bridge: root.bridge
             rowHeight: root.bridge ? root.bridge.treeRowHeight : 24
-            onScrolled: verticalScrollBar.revealTemporarily()
+            onScrolled: {
+                verticalScrollBar.revealTemporarily();
+                horizontalScrollBar.revealTemporarily();
+            }
         }
 
         onContentYChanged: {

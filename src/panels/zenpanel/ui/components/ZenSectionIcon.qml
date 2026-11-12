@@ -18,12 +18,20 @@ Kirigami.Icon {
 
     property ZenPanelBridge bridge: null
     required property string section
-    property string iconName: ""
+    property var iconName: ""
     property string fallbackIcon: "folder"
     property bool highlighted: false
     property bool forceMask: false
 
-    readonly property string effectiveIconName: root.iconName.length > 0 ? root.iconName : root.fallbackIcon
+    readonly property var effectiveIconName: {
+        if (root.iconName === undefined || root.iconName === null) {
+            return root.fallbackIcon;
+        }
+        if (typeof root.iconName === "string") {
+            return root.iconName.length > 0 ? root.iconName : root.fallbackIcon;
+        }
+        return root.iconName;
+    }
 
     source: {
         if (!root.bridge) {
@@ -33,7 +41,19 @@ Kirigami.Icon {
         return root.bridge.resolveSectionIcon(root.effectiveIconName, root.section);
     }
 
-    isMask: root.forceMask || (root.bridge ? root.bridge.isSectionIconMask(root.effectiveIconName, root.section) : false)
-    color: root.highlighted ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+    isMask: {
+        if (root.forceMask) {
+            return true;
+        }
+        if (!root.bridge) {
+            return false;
+        }
+        const _rev = root.bridge.themeMetricsRevision;
+        return root.bridge.isSectionIconMask(root.effectiveIconName, root.section);
+    }
+
+    color: root.isMask
+        ? (root.highlighted ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor)
+        : "transparent"
 }
 

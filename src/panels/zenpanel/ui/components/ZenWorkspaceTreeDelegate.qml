@@ -10,10 +10,11 @@ import org.kde.kirigami as Kirigami
 import org.kde.dolphin.zenpanel
 
 /**
- * @brief Modular tree item delegate for WorkspaceTreeView, based on QQC2.TreeViewDelegate.
+ * @brief Native-first modular tree item delegate for WorkspaceTreeView, based on QQC2.TreeViewDelegate.
  *
- * Provides Breeze-compliant row layout, modern Pointer HoverHandler,
- * active tab/location pill indicators, and reliable focus rectangle integration.
+ * Preserves native TreeViewDelegate properties (indicator, indentation, leftPadding, rightPadding)
+ * while unifying background tab highlighting, ZenSectionIcon + Label content layout, and
+ * Dolphin click/drag interactions with ZenPlaceListDelegate and ZenDeviceDelegate.
  */
 QQC2.TreeViewDelegate {
     id: control
@@ -24,89 +25,80 @@ QQC2.TreeViewDelegate {
     property ZenTabsModel tabsModel: null
     property Item verticalScrollBar: null
 
-    // --- State and URL helpers ---
+    // --- External / derived state flags ---
+    readonly property string itemDisplay: (control.model && control.model.display !== undefined) ? control.model.display : ""
+    readonly property var itemDecoration: (control.model && control.model.decoration !== undefined) ? control.model.decoration : "folder"
     readonly property url itemUrl: (control.treeModel && control.treeView && control.row >= 0) ? control.treeModel.urlForIndex(control.treeView.index(control.row, 0)) : ""
     readonly property bool isCurrentLocation: (control.tabsModel && control.tabsModel.revision >= 0 && control.itemUrl !== "") ? control.tabsModel.isUrlActive(control.itemUrl) : false
     readonly property bool isOpenInAnyTab: (control.tabsModel && control.tabsModel.revision >= 0 && control.itemUrl !== "") ? control.tabsModel.hasUrl(control.itemUrl) : false
+
+    // --- Focus state ---
     readonly property bool isItemFocused: control.treeView && (control.treeView.currentRow === control.row) && control.treeView.activeFocus
 
-    // --- Signals forwarded to tree view / controller ---
+    // --- Signals ---
     signal folderClicked(url folderUrl)
     signal folderMiddleClicked(url folderUrl)
     signal folderRightClicked(url folderUrl, point globalPos)
     signal folderUrlsDropped(url targetUrl, var droppedUrls, point globalPos)
     signal dragAutoScrollRequested(real globalY)
-    signal dragAutoScrollStopped()
+    signal dragAutoScrollStopped
 
-    // Reserve space on the right for the slim ZenScrollBar handle so rows never shift or collide
-    implicitWidth: Math.max(Math.max(0, (control.treeView ? control.treeView.width : 0) - (control.verticalScrollBar ? control.verticalScrollBar.implicitWidth : 0) - 2), contentRow.implicitWidth + leftPadding + rightPadding + Kirigami.Units.smallSpacing)
-    implicitHeight: control.bridge ? control.bridge.treeRowHeight : Math.round(Kirigami.Units.gridUnit * 1.35)
+    // --- Sizing & metrics ---
+    readonly property int effectiveTreeIconSize: control.bridge ? control.bridge.treeIconSize : Kirigami.Units.iconSizes.smallMedium
+    readonly property real effectiveIndentWidth: Math.max(control.leftPadding, control.leftMargin + (control.depth + 1) * control.indentation + control.spacing)
+    topPadding: 0
+    bottomPadding: 0
+    implicitWidth: Math.ceil(control.effectiveIndentWidth + control.effectiveTreeIconSize + contentRow.spacing + textLabel.implicitWidth + control.rightPadding + Kirigami.Units.smallSpacing * 2)
+    implicitHeight: Math.max(control.bridge ? control.bridge.treeRowHeight : 0, control.effectiveTreeIconSize + Kirigami.Units.smallSpacing, Math.round(Kirigami.Units.gridUnit * 1.35))
+
+    onImplicitWidthChanged: {
+        if (control.treeView && control.implicitWidth > control.treeView.contentWidth) {
+            Qt.callLater(control.treeView.forceLayout);
+        }
+    }
 
     highlighted: control.current || control.selected || (control.treeView && control.treeView.currentRow === control.row)
 
+    // Full accessibility support following KDE HIG
+    Accessible.role: Accessible.ListItem
+    Accessible.name: control.itemDisplay
+
     onIsItemFocusedChanged: {
         if (control.isItemFocused && control.bridge) {
+            control.bridge.focusedItemDescription = control.itemDisplay;
+        }
+    }
+
+    function triggerContextMenu(localX: real, localY: real) {
+        if (control.treeView) {
+            control.treeView.forceActiveFocus();
             const idx = control.treeView.index(control.row, 0);
-            const name = control.treeModel ? control.treeModel.data(idx, Qt.DisplayRole) : "";
-            control.bridge.focusedItemDescription = name;
-        }
-    }
-
-    contentItem: RowLayout {
-        id: contentRow
-        spacing: control.bridge ? control.bridge.lateralMargin : Kirigami.Units.smallSpacing
-
-        // Spacer preserving vertical alignment for leaf nodes that lack an expand indicator
-        Item {
-            visible: control.isTreeNode && !control.hasChildren
-            Layout.preferredWidth: (control.indicator && control.indicator.implicitWidth > 0)
-                                   ? control.indicator.implicitWidth
-                                   : Math.round(Kirigami.Units.smallSpacing * 2.2)
-            Layout.preferredHeight: 1
-        }
-
-        ZenSectionIcon {
-            Layout.preferredWidth: control.bridge ? control.bridge.treeIconSize : Kirigami.Units.iconSizes.smallMedium
-            Layout.preferredHeight: Layout.preferredWidth
-            Layout.alignment: Qt.AlignVCenter
-            bridge: control.bridge
-            section: "tree"
-            iconName: "folder"
-            fallbackIcon: "folder"
-            highlighted: control.isCurrentLocation || control.isItemFocused
-        }
-
-        QQC2.Label {
-            Layout.fillWidth: true
-            text: {
-                if (control.text && control.text.length > 0) {
-                    return control.text;
-                }
-                if (!control.treeView || !control.treeModel) {
-                    return "";
-                }
-                const idx = control.treeView.index(control.row, 0);
-                return control.treeModel.data(idx, Qt.DisplayRole);
+            if (control.treeView.selectionModel) {
+                control.treeView.selectionModel.setCurrentIndex(idx, ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Current);
             }
-            verticalAlignment: Text.AlignVCenter
-            color: (control.highlighted && control.isItemFocused) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
-            font.weight: control.isCurrentLocation ? Font.DemiBold : Font.Normal
         }
+        const globalPoint = control.mapToGlobal(localX + control.contentItem.x, localY + control.contentItem.y);
+        control.folderRightClicked(control.itemUrl, Qt.point(Math.round(globalPoint.x), Math.round(globalPoint.y)));
     }
 
+    // List/tree element background container (unified with ZenPlaceListDelegate & ZenDeviceDelegate)
     background: Rectangle {
+        id: bgRect
+        anchors.fill: parent
+        anchors.margins: 1
         radius: control.bridge ? control.bridge.itemRadius : Kirigami.Units.cornerRadius
+
         color: {
-            if (rowDropArea.containsDrag) {
+            if (dropArea.containsDrag) {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.25);
             }
-            if (mouseArea.containsPress) {
+            if (control.down || leftTapHandler.pressed) {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.35);
             }
             if (control.isItemFocused) {
                 return Qt.alpha(Kirigami.Theme.focusColor, 0.12);
             }
-            if (rowHoverHandler.hovered) {
+            if (control.hovered) {
                 return Kirigami.Theme.hoverColor;
             }
             if (control.isCurrentLocation) {
@@ -121,7 +113,7 @@ QQC2.TreeViewDelegate {
             return "transparent";
         }
 
-        border.color: (control.isItemFocused || rowDropArea.containsDrag) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
+        border.color: (control.isItemFocused || dropArea.containsDrag) ? Qt.alpha(Kirigami.Theme.focusColor, 0.65) : "transparent"
         border.width: 1
 
         Behavior on color {
@@ -131,7 +123,7 @@ QQC2.TreeViewDelegate {
             }
         }
 
-        // Active location indicator pill matching KFilePlacesView / ZenPlaceListDelegate standard
+        // Left accent bar indicating the active location
         Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
@@ -144,33 +136,54 @@ QQC2.TreeViewDelegate {
         }
     }
 
-    // Modern pointer hover detection decoupled from mouse button clicks
-    HoverHandler {
-        id: rowHoverHandler
-    }
+    // Visual content: Icon + Title (unified with ZenPlaceListDelegate & ZenDeviceDelegate)
+    contentItem: RowLayout {
+        id: contentRow
+        LayoutMirroring.enabled: control.mirrored
+        spacing: control.bridge ? control.bridge.lateralMargin : Kirigami.Units.smallSpacing
 
-    // Pointer interaction on the row content (excluding the branch indicator arrow on the left,
-    // which remains handled directly by TreeViewDelegate to toggle expansion):
-    // - Shift + Left-Click: only expand/collapse the node without opening the folder (Dolphin FoldersPanel behavior)
-    // - Ctrl + Left-Click or Middle-Click: open folder in a new tab
-    // - Normal Left-Click: open folder in active view
-    // - Right-Click: open TreeView context menu
-    MouseArea {
-        id: mouseArea
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        x: control.indicator && control.indicator.visible ? (control.indicator.x + control.indicator.width) : 0
-        width: Math.max(0, parent.width - x)
-        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        // Preserve native truncation tooltip compatibility in org.kde.desktop
+        property alias truncated: textLabel.truncated
 
-        onPressed: {
-            if (control.bridge) {
-                control.bridge.notifyMouseInteraction("workspace");
-            }
+        ZenSectionIcon {
+            Layout.preferredWidth: control.effectiveTreeIconSize
+            Layout.preferredHeight: control.effectiveTreeIconSize
+            Layout.alignment: Qt.AlignVCenter
+            // Fallback for QQC2 styles (e.g. org.kde.union) that skip the invisible indicator slot when !hasChildren
+            Layout.leftMargin: (!control.hasChildren && contentRow.x < (control.depth + 1) * control.indentation)
+                ? ((control.indicator && control.indicator.implicitWidth > 0 ? control.indicator.implicitWidth : control.indentation) + control.spacing)
+                : 0
+            bridge: control.bridge
+            section: "tree"
+            iconName: control.itemDecoration
+            fallbackIcon: "folder"
+            highlighted: control.isCurrentLocation || control.isItemFocused
         }
 
-        onClicked: function (mouse) {
+        QQC2.Label {
+            id: textLabel
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.rightMargin: Kirigami.Units.smallSpacing
+            text: control.itemDisplay
+            elide: Text.ElideRight
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            color: Kirigami.Theme.textColor
+            font.weight: control.isCurrentLocation ? Font.DemiBold : Font.Normal
+        }
+    }
+
+    // Primary Left-Click / Tap interaction on folder content (from icon to right panel edge, excluding expander indicator)
+    TapHandler {
+        id: leftTapHandler
+        parent: control.contentItem
+        acceptedButtons: Qt.LeftButton
+        onTapped: function (eventPoint) {
+            // Suppress Shift + single-click (non-standard in Dolphin); Shift + double-click toggles expansion below
+            if (eventPoint.modifiers & Qt.ShiftModifier) {
+                return;
+            }
             if (control.treeView) {
                 control.treeView.forceActiveFocus();
                 const idx = control.treeView.index(control.row, 0);
@@ -178,28 +191,67 @@ QQC2.TreeViewDelegate {
                     control.treeView.selectionModel.setCurrentIndex(idx, ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Current);
                 }
                 control.treeView.positionViewAtRow(control.row, TableView.Contain);
-
-                const url = control.itemUrl;
-                if (mouse.button === Qt.LeftButton) {
-                    if (mouse.modifiers & Qt.ShiftModifier) {
-                        control.treeView.toggleExpanded(control.row);
-                    } else if (mouse.modifiers & Qt.ControlModifier) {
-                        control.folderMiddleClicked(url);
-                    } else {
-                        control.folderClicked(url);
-                    }
-                } else if (mouse.button === Qt.MiddleButton) {
-                    control.folderMiddleClicked(url);
-                } else if (mouse.button === Qt.RightButton) {
-                    const globalPoint = control.mapToGlobal(mouse.x + x, mouse.y);
-                    control.folderRightClicked(url, Qt.point(Math.round(globalPoint.x), Math.round(globalPoint.y)));
+            }
+            if (control.bridge) {
+                if (eventPoint.device.type === PointerDevice.TouchScreen) {
+                    control.bridge.notifyTouchInteraction("workspace");
+                } else {
+                    control.bridge.notifyMouseInteraction("workspace");
                 }
+            }
+            if (eventPoint.modifiers & Qt.ControlModifier) {
+                control.folderMiddleClicked(control.itemUrl);
+            } else {
+                control.folderClicked(control.itemUrl);
+            }
+        }
+        onDoubleTapped: function (eventPoint) {
+            // KDE / Dolphin convention: Shift + double-click expands/collapses the tree node without navigating
+            if ((eventPoint.modifiers & Qt.ShiftModifier) && control.treeView && control.hasChildren) {
+                control.treeView.toggleExpanded(control.row);
             }
         }
     }
 
+    // Middle-click: Open in new tab (Mouse / TouchPad only)
+    TapHandler {
+        parent: control.contentItem
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        acceptedButtons: Qt.MiddleButton
+        onTapped: {
+            if (control.treeView) {
+                control.treeView.forceActiveFocus();
+            }
+            if (control.bridge) {
+                control.bridge.notifyMouseInteraction("workspace");
+            }
+            control.folderMiddleClicked(control.itemUrl);
+        }
+    }
+
+    // Right-click: Open tree context menu (Mouse / TouchPad / Stylus)
+    TapHandler {
+        parent: control.contentItem
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.Stylus
+        acceptedButtons: Qt.RightButton
+        onTapped: function (eventPoint) {
+            control.triggerContextMenu(eventPoint.position.x, eventPoint.position.y);
+        }
+    }
+
+    // Touch press-and-hold (long-press): Open tree context menu on touchscreens
+    TapHandler {
+        parent: control.contentItem
+        acceptedDevices: PointerDevice.TouchScreen
+        gesturePolicy: TapHandler.WithinBounds
+        onLongPressed: {
+            control.triggerContextMenu(point.position.x, point.position.y);
+        }
+    }
+
+    // External file drop handler (Dolphin file drops + hover auto-expand)
     DropArea {
-        id: rowDropArea
+        id: dropArea
         anchors.fill: parent
         keys: ["text/uri-list"]
 
@@ -236,11 +288,10 @@ QQC2.TreeViewDelegate {
             interval: 750
             repeat: false
             onTriggered: {
-                if (rowDropArea.containsDrag && control.treeView && !control.treeView.isExpanded(control.row)) {
+                if (dropArea.containsDrag && control.treeView && !control.treeView.isExpanded(control.row)) {
                     control.treeView.expand(control.row);
                 }
             }
         }
     }
 }
-

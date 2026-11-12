@@ -330,6 +330,9 @@ void ZenPanelBridge::setCustomEssentialsIconSize(int size)
         settings->setCustomEssentialsIconSize(size);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomEssentialsIconSize updated:" << size;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
+        m_themeMetricsRevision++;
         Q_EMIT customSectionIconSizesChanged();
         Q_EMIT themeMetricsChanged();
     }
@@ -347,6 +350,9 @@ void ZenPanelBridge::setCustomPlacesIconSize(int size)
         settings->setCustomPlacesIconSize(size);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomPlacesIconSize updated:" << size;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
+        m_themeMetricsRevision++;
         Q_EMIT customSectionIconSizesChanged();
         Q_EMIT themeMetricsChanged();
     }
@@ -364,6 +370,9 @@ void ZenPanelBridge::setCustomDevicesIconSize(int size)
         settings->setCustomDevicesIconSize(size);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomDevicesIconSize updated:" << size;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
+        m_themeMetricsRevision++;
         Q_EMIT customSectionIconSizesChanged();
         Q_EMIT themeMetricsChanged();
     }
@@ -381,6 +390,8 @@ void ZenPanelBridge::setCustomTreeIconSize(int size)
         settings->setCustomTreeIconSize(size);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomTreeIconSize updated:" << size;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconSizesChanged();
         Q_EMIT themeMetricsChanged();
@@ -399,6 +410,8 @@ void ZenPanelBridge::setCustomTrashIconSize(int size)
         settings->setCustomTrashIconSize(size);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomTrashIconSize updated:" << size;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconSizesChanged();
         Q_EMIT themeMetricsChanged();
@@ -422,6 +435,8 @@ void ZenPanelBridge::setCustomEssentialsIconStyle(int style)
         settings->setCustomEssentialsIconStyle(style);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomEssentialsIconStyle updated:" << style;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconStylesChanged();
         Q_EMIT themeMetricsChanged();
@@ -440,6 +455,8 @@ void ZenPanelBridge::setCustomPlacesIconStyle(int style)
         settings->setCustomPlacesIconStyle(style);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomPlacesIconStyle updated:" << style;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconStylesChanged();
         Q_EMIT themeMetricsChanged();
@@ -458,6 +475,8 @@ void ZenPanelBridge::setCustomDevicesIconStyle(int style)
         settings->setCustomDevicesIconStyle(style);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomDevicesIconStyle updated:" << style;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconStylesChanged();
         Q_EMIT themeMetricsChanged();
@@ -476,6 +495,8 @@ void ZenPanelBridge::setCustomTreeIconStyle(int style)
         settings->setCustomTreeIconStyle(style);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomTreeIconStyle updated:" << style;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconStylesChanged();
         Q_EMIT themeMetricsChanged();
@@ -494,6 +515,8 @@ void ZenPanelBridge::setCustomTrashIconStyle(int style)
         settings->setCustomTrashIconStyle(style);
         settings->save();
         qCDebug(zenLog) << "[Settings] CustomTrashIconStyle updated:" << style;
+        m_colorIconCache.clear();
+        m_symbolicIconCache.clear();
         m_themeMetricsRevision++;
         Q_EMIT customSectionIconStylesChanged();
         Q_EMIT themeMetricsChanged();
@@ -614,18 +637,21 @@ QVariant ZenPanelBridge::resolveSectionIcon(const QVariant &baseIcon, const QStr
             target = name;
         }
 
-        // When visual size is <= KIconLoader::SizeSmallMedium (22px), themes such as Breeze serve
-        // monochrome outline icons. Load the colorful SizeMedium (32px) version via KIconLoader
-        // so that Kirigami scales down the full-color pixmap.
+        // When visual size is < KIconLoader::SizeMedium (32px), themes such as Breeze serve
+        // monochrome outline icons. For devices, Breeze only provides full-color icons at SizeHuge (64px).
+        // Load the colorful 32px or 64px pixmap via KIconLoader so that Kirigami scales down the full-color pixmap.
         const int visualSize = sectionIconSize(section);
-        if (visualSize <= KIconLoader::SizeSmallMedium) {
+        const bool isDevice = (section == QLatin1String("devices") || target.startsWith(QLatin1String("drive-")) || target.startsWith(QLatin1String("media-")));
+        const int minColorSize = isDevice ? KIconLoader::SizeHuge : KIconLoader::SizeMedium;
+
+        if (visualSize < minColorSize) {
             auto it = m_colorIconCache.constFind(target);
             if (it != m_colorIconCache.constEnd()) {
                 return QVariant::fromValue(*it);
             }
 
             if (KIconLoader::global()) {
-                const QPixmap px = KIconLoader::global()->loadIcon(target, KIconLoader::NoGroup, KIconLoader::SizeMedium);
+                const QPixmap px = KIconLoader::global()->loadIcon(target, KIconLoader::NoGroup, minColorSize);
                 if (!px.isNull()) {
                     const QIcon colorIcon(px);
                     m_colorIconCache.insert(target, colorIcon);
@@ -913,12 +939,23 @@ int ZenPanelBridge::devicesRowHeight() const
 
 int ZenPanelBridge::treeRowHeight() const
 {
-    if (isDolphinStyle()) {
-        return placesRowHeight();
-    }
     const int sz = treeIconSize();
+    if (isDolphinStyle()) {
+        QStyleOptionViewItem opt;
+        opt.features |= QStyleOptionViewItem::HasDecoration;
+        opt.decorationSize = QSize(sz, sz);
+        if (QApplication::style()) {
+            const QSize szOpt = QApplication::style()->sizeFromContents(QStyle::CT_ItemViewItem, &opt, QSize(sz, sz), nullptr);
+            const int styleHeight = szOpt.height();
+            if (styleHeight > 0) {
+                return qMax(sz + 4, styleHeight);
+            }
+        }
+        return sz + 4;
+    }
+
     const int fontHeight = QFontMetrics(QApplication::font()).height();
-    return qMax(sz + 8, qMax(28, qRound(fontHeight * 1.7)));
+    return qMax(sz + 6, qRound(fontHeight * 1.35));
 }
 
 int ZenPanelBridge::itemRowHeight() const

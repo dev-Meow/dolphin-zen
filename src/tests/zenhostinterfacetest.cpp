@@ -14,6 +14,8 @@
 #include "panels/zenpanel/zenpanelsettings.h"
 
 #include <QApplication>
+#include <QDir>
+#include <QQuickItem>
 #include <QQuickWidget>
 #include <QSignalSpy>
 #include <QStandardPaths>
@@ -36,6 +38,7 @@ private Q_SLOTS:
     void testSignalForwardingContract();
     void testTabsModelContract();
     void testOrientationAndLockContract();
+    void testIconStyleAndMaskContract();
     void testSettingsContract();
     void testQmlHostContract();
     void cleanupTestCase();
@@ -154,6 +157,52 @@ void ZenHostInterfaceTest::testOrientationAndLockContract()
     QCOMPARE(bridge->panelsLocked(), false);
 }
 
+void ZenHostInterfaceTest::testIconStyleAndMaskContract()
+{
+    ZenPanelBridge *bridge = m_panel->bridge();
+    QVERIFY(bridge != nullptr);
+
+    const int initialRev = bridge->themeMetricsRevision();
+
+    // 1. Test "always colorful" (GlobalIconStyle = 1)
+    bridge->setGlobalIconStyle(1);
+    QCOMPARE(bridge->globalIconStyle(), 1);
+    QVERIFY(bridge->themeMetricsRevision() > initialRev);
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("places")), 1);
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("devices")), 1);
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("user-home"), QStringLiteral("places")), false);
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("drive-harddisk"), QStringLiteral("devices")), false);
+
+    const QVariant colorPlaceIcon = bridge->resolveSectionIcon(QStringLiteral("user-home"), QStringLiteral("places"));
+    QVERIFY(colorPlaceIcon.isValid());
+    const QVariant colorDeviceIcon = bridge->resolveSectionIcon(QStringLiteral("drive-harddisk"), QStringLiteral("devices"));
+    QVERIFY(colorDeviceIcon.isValid());
+
+    // 2. Test "always schematic / monochrome" (GlobalIconStyle = 2)
+    const int revBeforeMono = bridge->themeMetricsRevision();
+    bridge->setGlobalIconStyle(2);
+    QCOMPARE(bridge->globalIconStyle(), 2);
+    QVERIFY(bridge->themeMetricsRevision() > revBeforeMono);
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("places")), 2);
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("devices")), 2);
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("user-home"), QStringLiteral("places")), true);
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("drive-harddisk"), QStringLiteral("devices")), true);
+
+    // 3. Test Section Override (e.g. Places set to always colorful while Global is monochrome)
+    // Section override values: 0 = Follow Global, 1 = System Theme, 2 = Color, 3 = Monochrome
+    const int revBeforeOverride = bridge->themeMetricsRevision();
+    bridge->setCustomPlacesIconStyle(2); // Always colorful for places
+    QVERIFY(bridge->themeMetricsRevision() > revBeforeOverride);
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("places")), 1); // maps to 1 = color
+    QCOMPARE(bridge->effectiveSectionIconStyle(QStringLiteral("devices")), 2); // still 2 = monochrome
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("user-home"), QStringLiteral("places")), false);
+    QCOMPARE(bridge->isSectionIconMask(QStringLiteral("drive-harddisk"), QStringLiteral("devices")), true);
+
+    // Reset section override and global style
+    bridge->setCustomPlacesIconStyle(0);
+    bridge->setGlobalIconStyle(0);
+}
+
 void ZenHostInterfaceTest::testSettingsContract()
 {
     ZenPanelSettings *settings = ZenPanelSettings::self();
@@ -172,6 +221,20 @@ void ZenHostInterfaceTest::testQmlHostContract()
 
     // Ensure QQuickWidget didn't fail during instantiation
     QVERIFY(m_panel->quickWidget()->status() != QQuickWidget::Error);
+
+    QQuickItem *rootItem = m_panel->quickWidget()->rootObject();
+    QVERIFY(rootItem != nullptr);
+
+    // Verify view mode switcher is functional
+    for (QQuickItem *child : rootItem->findChildren<QQuickItem *>()) {
+        if (child->property("currentViewIndex").isValid()) {
+            child->setProperty("currentViewIndex", 1);
+            QCOMPARE(child->property("currentViewIndex").toInt(), 1);
+            child->setProperty("currentViewIndex", 0);
+            QCOMPARE(child->property("currentViewIndex").toInt(), 0);
+            break;
+        }
+    }
 }
 
 #include "zenhostinterfacetest.moc"

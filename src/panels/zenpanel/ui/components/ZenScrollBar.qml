@@ -111,7 +111,7 @@ T.ScrollBar {
         id: handleRect
         implicitWidth: root.vertical ? Math.max(4, root.implicitWidth - 2) : 0
         implicitHeight: root.horizontal ? Math.max(4, root.implicitHeight - 2) : 0
-        radius: width / 2
+        radius: Math.min(width, height) / 2
 
         color: (root.pressed || root.hovered)
             ? Kirigami.Theme.highlightColor

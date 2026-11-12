@@ -46,10 +46,61 @@ Item {
         easing.type: Easing.OutQuad
     }
 
+    NumberAnimation {
+        id: scrollAnimationX
+        target: root.flickable
+        property: "contentX"
+        duration: Kirigami.Units.shortDuration
+        easing.type: Easing.OutQuad
+    }
+
     Connections {
         target: root.flickable
         function onMovementStarted() {
             scrollAnimation.stop();
+            scrollAnimationX.stop();
+        }
+    }
+
+    WheelHandler {
+        id: horizontalWheelHandler
+        target: null
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        orientation: Qt.Horizontal
+
+        onWheel: function (event) {
+            const maxContentX = Math.max(0, root.flickable.contentWidth - root.flickable.width);
+            if (maxContentX <= 0) {
+                event.accepted = true;
+                return;
+            }
+
+            if (event.pixelDelta && event.pixelDelta.x !== 0) {
+                scrollAnimationX.stop();
+                const delta = event.pixelDelta.x * root.speedMultiplier;
+                const newX = Math.max(0, Math.min(maxContentX, root.flickable.contentX - delta));
+                if (newX !== root.flickable.contentX) {
+                    root.flickable.contentX = newX;
+                    root.scrolled();
+                }
+                event.accepted = true;
+                return;
+            }
+
+            if (event.angleDelta.x !== 0) {
+                const currentTargetX = scrollAnimationX.running ? Number(scrollAnimationX.to) : root.flickable.contentX;
+                const deltaX = (event.angleDelta.x / 120.0) * root.stepSize * root.speedMultiplier;
+                const newTargetX = Math.max(0, Math.min(maxContentX, currentTargetX - deltaX));
+
+                if (newTargetX !== root.flickable.contentX) {
+                    scrollAnimationX.stop();
+                    scrollAnimationX.from = root.flickable.contentX;
+                    scrollAnimationX.to = newTargetX;
+                    scrollAnimationX.start();
+                    root.scrolled();
+                }
+                event.accepted = true;
+            }
         }
     }
 
@@ -60,6 +111,23 @@ Item {
         orientation: Qt.Vertical
 
         onWheel: function (event) {
+            // Shift + vertical mouse wheel scrolls horizontally when horizontal overflow exists
+            const maxContentX = Math.max(0, root.flickable.contentWidth - root.flickable.width);
+            if ((event.modifiers & Qt.ShiftModifier) && maxContentX > 0 && event.angleDelta.y !== 0) {
+                const currentTargetX = scrollAnimationX.running ? Number(scrollAnimationX.to) : root.flickable.contentX;
+                const deltaX = (event.angleDelta.y / 120.0) * root.stepSize * root.speedMultiplier;
+                const newTargetX = Math.max(0, Math.min(maxContentX, currentTargetX - deltaX));
+                if (newTargetX !== root.flickable.contentX) {
+                    scrollAnimationX.stop();
+                    scrollAnimationX.from = root.flickable.contentX;
+                    scrollAnimationX.to = newTargetX;
+                    scrollAnimationX.start();
+                    root.scrolled();
+                }
+                event.accepted = true;
+                return;
+            }
+
             const maxContentY = Math.max(0, root.flickable.contentHeight - root.flickable.height);
             if (maxContentY <= 0) {
                 event.accepted = true;
