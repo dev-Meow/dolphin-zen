@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           dnf install -y --setopt=install_weak_deps=False \
-            cmake ninja-build gcc-c++ git python3 extra-cmake-modules \
+            cmake ninja-build gcc-c++ git python3 gettext libX11-devel extra-cmake-modules \
             qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel qt6-qtmultimedia-devel \
             kf6-kio-devel kf6-kbookmarks-devel kf6-kitemmodels-devel \
             kf6-kcoreaddons-devel kf6-kconfig-devel kf6-knotifications-devel \
@@ -73,7 +73,7 @@ jobs:
       - name: Install dependencies
         run: |
           dnf install -y --setopt=install_weak_deps=False \
-            cmake ninja-build gcc-c++ git python3 gh extra-cmake-modules \
+            cmake ninja-build gcc-c++ git python3 gh gettext libX11-devel extra-cmake-modules \
             qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel qt6-qtmultimedia-devel \
             kf6-kio-devel kf6-kbookmarks-devel kf6-kitemmodels-devel \
             kf6-kcoreaddons-devel kf6-kconfig-devel kf6-knotifications-devel \

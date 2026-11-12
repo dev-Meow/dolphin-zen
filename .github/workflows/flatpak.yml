@@ -18,10 +18,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Flatpak
-        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: Install flatpak & flatpak-builder
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder elfutils appstream
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Restore flatpak-builder cache
+        uses: actions/cache@v4
         with:
-          bundle: dolphin-zen.flatpak
-          manifest-path: org.kde.dolphin-zen.json
-          cache-key: flatpak-builder-${{ github.sha }}
+          path: .flatpak-builder
+          key: flatpak-builder-${{ runner.os }}-${{ hashFiles('org.kde.dolphin-zen.json') }}
+          restore-keys: |
+            flatpak-builder-${{ runner.os }}-
+
+      - name: Build Flatpak repository
+        run: |
+          flatpak-builder --user --install-deps-from=flathub --force-clean --repo=repo flatpak-build-dir org.kde.dolphin-zen.json
+
+      - name: Create Flatpak bundle
+        run: |
+          flatpak build-bundle repo dolphin-zen.flatpak org.kde.dolphin-zen
+
+      - name: Upload Flatpak artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dolphin-zen-flatpak
+          path: dolphin-zen.flatpak
 
